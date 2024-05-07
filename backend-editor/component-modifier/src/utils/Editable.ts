@@ -2,10 +2,10 @@ import { deleteFolderSync, createIndexYaml, renameFolder } from "./fileUtils";
 
 export abstract class Editable {
   static REGISTER_ID = "EDITABLE";
-  longPath: string;
-  name: string;
-  folderPath: string;
-  yamlPathLong: string;
+  longPath: string; //  
+  name: string; // folder name
+  folderPath: string;  // folder path
+  yamlPathLong: string; // index.yaml  path
 
   constructor(path, name) {
     this.longPath = path;

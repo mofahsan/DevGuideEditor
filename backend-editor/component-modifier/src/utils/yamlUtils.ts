@@ -29,6 +29,19 @@ export async function updateYamlRefAttr(filePath, section, del = false) {
     del
   );
 }
+
+export async function updateYamlRefFlow(filePath, section, del = false) {
+  await updateYamlRef(
+    filePath,
+    section,
+    {
+      attribute_set: { $ref: `./${section}/index.yaml` },
+    },
+    del
+  );
+}
+
+
 export async function updateYamlRefEnum(filePath, section, del = false) {
   await updateYamlRef(
     filePath,

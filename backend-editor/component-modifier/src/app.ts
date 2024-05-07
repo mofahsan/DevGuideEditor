@@ -34,8 +34,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/direct", indexRouter);
-app.use("/tree", pathRouter);
+app.use("/direct", indexRouter);   // dfs
+app.use("/tree", pathRouter); //folder structure
+
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

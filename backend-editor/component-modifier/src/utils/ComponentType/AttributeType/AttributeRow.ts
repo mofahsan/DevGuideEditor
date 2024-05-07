@@ -65,7 +65,7 @@ export class AttributeFile extends FileTypeEditable {
     if (
       "sheetName" in deletionObject &&
       !Array.isArray(deletionObject.sheetName)
-    ) {
+  ) {
       delete data[deletionObject.sheetName];
       const yml = sheetsToYAML(data);
       await overrideYaml(this.yamlPathLong, yml);

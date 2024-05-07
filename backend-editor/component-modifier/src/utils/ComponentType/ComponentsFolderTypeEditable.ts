@@ -7,6 +7,7 @@ import { Editable } from "../Editable";
 import { EnumFileType } from "./enumType/enumFileType";
 import { EnumFolderType } from "./enumType/enumFolderType";
 import { TagsFolderType } from "./tagType/tagsFolderType";
+import { FlowFolderType } from "./flowType/flowFolderType";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
@@ -19,9 +20,13 @@ export class ComponentsType extends folderTypeEditable {
       AttributesFolderTypeEditable.REGISTER_ID,
       EnumFolderType.REGISTER_ID,
       TagsFolderType.REGISTER_ID,
+      FlowFolderType.REGISTER_ID
     ];
   }
+
+
   async add(new_editable: { ID: string }) {
+    
     if (!this.allowedList.includes(new_editable.ID)) {
       throw new Error("GIVEN TYPE IS NOT ALLOWED IN " + this.getRegisterID());
     }
@@ -35,7 +40,8 @@ export class ComponentsType extends folderTypeEditable {
     );
     await updateYamlRefComponents(this.yamlPathLong, addedChild.name);
   }
-  async getData(query) {
+  
+  async getData(query) { // iterate over the 
     if (this.childrenEditables.length === 0) return [];
     const data = this.childrenEditables.map((editable) => {
       return {
@@ -69,6 +75,9 @@ export class ComponentsType extends folderTypeEditable {
     }
     if (ID === TagsFolderType.REGISTER_ID) {
       return "tags";
+    }
+    if (ID === FlowFolderType.REGISTER_ID) {
+      return "flows";
     }
     return "UNKNOWN";
   }

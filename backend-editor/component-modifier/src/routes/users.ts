@@ -19,7 +19,7 @@ const sessionInstances: EditableMap<ComponentsType> = {};
 let currentSessionID: string = "";
 const history = new HistoryUtil(5);
 
-initRegistry();
+initRegistry(); // 
 
 export const app = express();
 app.use(express.json());
@@ -46,7 +46,7 @@ app.all("/guide/*", async (req: any, res, next) => {
   }
   currentSessionID = pathSegments[0];
   if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
-    sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
+    sessionInstances[currentSessionID] = await EditableRegistry.loadComponent( // component folder ka instance banadega
       `../../../ONDC-NTS-Specifications/api/${currentSessionID}`,
       currentSessionID
     );
@@ -57,7 +57,7 @@ app.all("/guide/*", async (req: any, res, next) => {
 let parent: Editable = undefined;
 let target: Editable = undefined;
 
-app.all("/guide/*", async (req: any, res, next) => {
+app.all("/guide/*", async (req: any, res, next) => { // path extract kis path pe edit krrhey ho
   const fullPath = req.params[0];
   const pathSegments: string[] = fullPath.split("/");
   target = sessionInstances[pathSegments[0]];
@@ -91,7 +91,9 @@ app.all("/guide/*", async (req: any, res, next) => {
 app.get("/guide/*", async (req, res, next) => {
   try {
     let query = { ...req.query };
+    
     query = query ? query : {};
+    // target is the instance of component class
     res.status(200).send(await target.getData(query));
   } catch (e) {
     res.status(500).json({
@@ -101,9 +103,9 @@ app.get("/guide/*", async (req, res, next) => {
   }
 });
 
-app.post("/guide/*", async (req, res, next) => {
+app.post("/guide/*", async (req, res, next) => { 
   try {
-    await history.addHistory(sessionInstances[currentSessionID]);
+    await history.addHistory(sessionInstances[currentSessionID]); // history is for undo
     await target.add(req.body);
     return res.status(201).send("DATA ADDED");
   } catch (e) {

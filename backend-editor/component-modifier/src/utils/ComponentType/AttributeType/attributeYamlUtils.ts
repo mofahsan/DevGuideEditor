@@ -4,6 +4,7 @@ import path from "path";
 import { readYamlFile } from "../../fileUtils";
 import { AttributeRow } from "./AttributeRow";
 
+// input (raw yaml) to sheets
 export function getSheets(yamlData) {
   let sheets = {};
   const obj: any = yaml.load(yamlData);
@@ -18,6 +19,7 @@ export function getSheets(yamlData) {
   return sheets;
 }
 
+// new attribute
 export function addRows(data, sheetName: string, rows: AttributeRow[]) {
   const sheet = data[sheetName] ?? [];
   for (const row of rows) {
@@ -42,6 +44,7 @@ export function addRows(data, sheetName: string, rows: AttributeRow[]) {
  * @param rows The rows to be removed, each containing attributes to match against.
  * @returns Updated workbook data with the rows removed from the specified sheet.
  */
+// delete row
 export function deleteRows(
   data: Record<string, AttributeRow[]>,
   sheetName: string,
@@ -103,6 +106,7 @@ export function updateRows(
   console.log(`Rows updated successfully in sheet "${sheetName}".`);
 }
 
+// sheet conversion into yaml
 export function sheetsToYAML(sheets) {
   let obj = {};
   console.log(sheets);
@@ -114,6 +118,7 @@ export function sheetsToYAML(sheets) {
   return yaml.dump(obj);
 }
 
+// sheets to yaml helper function
 function listDetailedPaths(yamlString) {
   // console.log(yamlString);
   try {
@@ -135,6 +140,8 @@ function listDetailedPaths(yamlString) {
     return [];
   }
 }
+
+// helper yaml to sheet ka 
 function exploreObject(subObj, currentPath, detailedPaths) {
   for (const key in subObj) {
     // Check if it's an own property and not inherited
@@ -171,7 +178,11 @@ function exploreObject(subObj, currentPath, detailedPaths) {
   }
   return detailedPaths;
 }
+
+// helper function input(paths) -> nested krdega //
+// message.intent.id = map to a path
 function convertDetailedPathsToNestedObjects(detailedPaths) {
+
   // Function to safely access nested properties
   function setPath(obj, path, value) {
     const keys = path.split(".");

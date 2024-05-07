@@ -9,6 +9,7 @@ export class EditableRegistry {
   static registry = {};
 
   static register(cls: any) {
+    
     this.registry[cls.REGISTER_ID] = cls;
   }
   static async create(type, path, name) {
@@ -49,6 +50,23 @@ export class EditableRegistry {
             if (attrFile.isDirectory()) {
               await attr.add({
                 ID: "ATTRIBUTE_FILE",
+                name: attrFile.name,
+              });
+            }
+          }
+        }
+        if (file.name === "flows") {
+          await comp.add({
+            ID: "FLOW_FOLDER",
+          });
+          const attr = comp.getTarget("FLOW_FOLDER", "flows", comp);
+          const attrFiles = await fs_p.readdir(attr.folderPath, {
+            withFileTypes: true,
+          });
+          for (const attrFile of attrFiles) {
+            if (attrFile.isDirectory()) {
+              await attr.add({
+                ID: "FLOW_FILE",
                 name: attrFile.name,
               });
             }
