@@ -22,7 +22,9 @@ export class FlowFileType extends FileTypeEditable {
   }
 
   async getData(): Promise<Record<string, FlowObject[]>> {
-    return flowFromApi(await readYamlFile(this.yamlPathLong));
+    const response = flowFromApi(await readYamlFile(this.yamlPathLong));
+    console.log("ahsan")
+    return response
   }
 
   async add(dataToAdd: Record<string, FlowObject[]>) {

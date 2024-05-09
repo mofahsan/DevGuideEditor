@@ -20,6 +20,12 @@ export const EnumFolderID = "ENUM_FOLDER";
 export const EnumFileId = "ENUM_FILE";
 export const TagFolderID = "TAG_FOLDER";
 export const TagFileID = "TAG_FILE";
+export const flowFolderID = "FLOW_FOLDER";
+export const FlowFileID = "FLOW_FILE"; 
+
+
+
+
 
 export function HomePage() {
   const [loading, setLoading] = React.useState(false);
@@ -69,6 +75,7 @@ export function HomePage() {
     setLoading(true);
     let getComp: FetchedComponents[] = await getData(activePath.current);
     let compsList: Editable[] = [];
+    console.log(getComp)
     for (let comp of getComp) {
       const editable: Editable = {
         name: comp.name,

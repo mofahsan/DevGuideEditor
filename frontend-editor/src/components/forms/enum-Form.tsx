@@ -95,6 +95,7 @@ export function EnumForm({
 
   useEffect(() => {
     const fetchOptions = async () => {
+      console.log("fetch attribute")
       const fetched = await getData(
         dataContext.activePath.current + "/attributes",
         { type: "pathSet" }

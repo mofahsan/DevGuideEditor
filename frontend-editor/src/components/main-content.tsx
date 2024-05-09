@@ -5,10 +5,13 @@ import {
   AttributeFolderID,
   EnumFolderID,
   TagFolderID,
+  flowFolderID
+  
 } from "../pages/home-page";
 
 import { EnumContent, EnumFolderContent } from "./EnumContent";
 import { TagsFolderContent } from "./tag-content";
+import {FlowFolderContent} from "./flow-content"
 
 export function MainContent({
   activeEditable,
@@ -26,6 +29,9 @@ export function MainContent({
       )}
       {activeEditable?.registerID === TagFolderID && (
         <TagsFolderContent tagFolder={activeEditable} />
+      )}
+      {activeEditable?.registerID === flowFolderID && (
+        <FlowFolderContent flowFolder={activeEditable} />
       )}
     </>
   );

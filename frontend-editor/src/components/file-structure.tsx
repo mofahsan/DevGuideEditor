@@ -33,6 +33,7 @@ export const ComponentsStructure = ({
 }: ComponentsStructureProps) => {
   const dataContext = useContext(DataContext);
   const handleTabClick = (item: Editable) => {
+    console.log(item)
     dataContext.setActiveEditable(item);
   };
 
@@ -65,7 +66,7 @@ export const ComponentsStructure = ({
 };
 
 function Tab({ item, index, activeTab, handleTabClick }: any) {
-  const tooltip = useEditorToolTip([false, true, true]);
+  const tooltip = useEditorToolTip([false, true, true]); /// edit, add, delete, raw always true
   const thisItem = item as Editable;
   tooltip.data.current = thisItem;
   return (

@@ -23,6 +23,7 @@ export class FlowFolderType extends folderTypeEditable {
   }
 
   async getData(query: any) {
+    
     if (this.childrenEditables.length === 0) return [];
     if (query.type === "pathSet") {
       const data = new Set();
@@ -45,12 +46,12 @@ export class FlowFolderType extends folderTypeEditable {
       throw new Error("Cannot delete the default Flow");
     }
     await super.remove(deleteTarget);
-    await updateYamlRefFlow(this.yamlPathLong, deleteTarget.folderName, true);
+    // await updateYamlRefFlow(this.yamlPathLong, deleteTarget.folderName, true);
   }
   async update(update: UpdateObj) {
     await super.update(update);
-    await updateYamlRefFlow(this.yamlPathLong, update.oldName, true);
-    await updateYamlRefFlow(this.yamlPathLong, update.newName);
+    // await updateYamlRefFlow(this.yamlPathLong, update.oldName, true);
+    // await updateYamlRefFlow(this.yamlPathLong, update.newName);
   }
   getRegisterID(): string {
     return FlowFolderType.REGISTER_ID;

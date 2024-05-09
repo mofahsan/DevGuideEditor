@@ -45,11 +45,13 @@ export function mergeFlowObjectRecords(
 
 export function flowFromApi(yamlData: string) {
   const obj: any = yaml.load(yamlData);
-  let data = {};
-  for (const key in obj) {
-    data[key] = listDetailedPaths(obj[key]);
-  }
-  return data;
+  
+  // let data = {};
+  // for (const key in obj) {
+  //   data[key] = listDetailedPaths(obj[key]);
+  // }
+  // return data;
+  return obj
 }
 
 export function flowToNested(data: Record<string, FlowObject[]>) {
@@ -71,6 +73,7 @@ function explorePaths(
   currentPath: string,
   detailedPaths: FlowObject[]
 ) {
+
   for (const key in subObj) {
     const newPath = currentPath ? `${currentPath}.${key}` : key;
     if (
@@ -93,6 +96,7 @@ function explorePaths(
       detailedPaths.push({ path: newPath, Flow: flow });
     }
   }
+
   return detailedPaths;
 }
 

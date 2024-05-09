@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Editable } from "./file-structure";
 import { getData } from "../utils/requestUtils";
 import React from "react";
-import { TagFolderID } from "../pages/home-page";
+import { flowFolderID } from "../pages/home-page";
 import Dropdown from "./horizontal-tab";
 import { Disclosure } from "@headlessui/react";
 import useEditorToolTip from "../hooks/useEditorToolTip";
@@ -11,6 +11,9 @@ import { CgMenuMotion } from "react-icons/cg";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { GoRelFilePath } from "react-icons/go";
 import { DropTransition } from "./helper-components";
+import HorizontalTabBar from "./horizontal-tab";
+
+
 
 interface Tag {
   code: string;
@@ -29,44 +32,57 @@ interface TagData {
 
 type TagResponse = Record<string, TagData[]>;
 
-export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
+export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
+
+
   const [folderData, setFolderData] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>();
+  const [editType, setEditType] = useState<any>(["select an option","flow","steps"]);
+  const [selectedEditType, setSelectedEditType] = useState<any>(["flow","steps"]);
+
+console.log(selectedFolder)
   const reRender = useRef(false);
-  async function getTagFolder() {
-    const data = await getData(tagFolder.path);
+  async function getflowFolder() {
+    try{
+    // return
+    const data = await getData(flowFolder.path);
+    console.log("myworld")
     setFolderData(data);
     reRender.current = !reRender.current;
     console.log(data);
+    }
+    catch(err){
+      console.log(err)
+    }
   }
-  tagFolder.query.getData = getTagFolder;
+  flowFolder.query.getData = getflowFolder;
 
   React.useEffect(() => {
-    getTagFolder();
+    getflowFolder();
   }, []);
 
   const FolderEditable: Editable = {
     name: selectedFolder ?? "",
-    path: tagFolder.path + "/" + selectedFolder,
-    deletePath: tagFolder.path + "/" + selectedFolder,
-    registerID: tagFolder.registerID,
+    path: flowFolder.path + "/" + selectedFolder,
+    deletePath: flowFolder.path + "/" + selectedFolder,
+    registerID: flowFolder.registerID,
     query: {
-      getData: getTagFolder,
-      Parent: tagFolder.query.Parent,
+      getData: getflowFolder,
+      Parent: flowFolder.query.Parent,
       updateParams: { oldName: selectedFolder },
       copyData: async () => {
-        const data = await getData(tagFolder.path + "/" + selectedFolder);
+        const data = await getData(flowFolder.path + "/" + selectedFolder);
         return JSON.stringify(data, null, 2);
       },
     },
   };
   const TagEditable: Editable = {
     name: selectedFolder ?? "",
-    path: tagFolder.path + "/" + selectedFolder,
-    deletePath: tagFolder.path + "/" + selectedFolder,
-    registerID: tagFolder.registerID,
+    path: flowFolder.path + "/" + selectedFolder,
+    deletePath: flowFolder.path + "/" + selectedFolder,
+    registerID: flowFolder.registerID,
     query: {
-      Parent: tagFolder,
+      Parent: flowFolder,
       getData: async () => {
         console.log("hello");
       },
@@ -76,15 +92,28 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
   return (
     <>
       <div className="mt-3 ml-3 max-w-full">
+
+      <div className="flex w-full">
         <div className="flex-1">
-          <Dropdown
+          <HorizontalTabBar
             items={folderData}
             selectedItem={selectedFolder ?? ""}
             setSelectedItem={setSelectedFolder}
-            onOpen={getTagFolder}
+            onOpen={getflowFolder}
             editable={FolderEditable}
           />
         </div>
+        <div className="flex-1">
+          <HorizontalTabBar
+            items={editType}
+            selectedItem={editType ?? ""}
+            setSelectedItem={setEditType}
+            onOpen={getflowFolder}
+            editable={FolderEditable}
+          />
+        </div>
+      </div>
+
         {selectedFolder && selectedFolder !== "" && (
           <TagContent tags={TagEditable} reRender={reRender.current} />
         )}
@@ -186,7 +215,10 @@ function TagDisclose({
           </Disclosure.Button>
           <DropTransition>
             <Disclosure.Panel>
-              {data.map((tag, index) => (
+              {
+                JSON.stringify(data)
+              }
+            {/* {data.map((tag, index) => (
                 <AllTagList
                   key={index}
                   tagData={tag}
@@ -194,7 +226,7 @@ function TagDisclose({
                   tagEditable={apiEditable}
                 />
               ))}
-              {data.length === 0 && <div>No Enums</div>}
+              {data.length === 0 && <div>No Enums</div>} */}
             </Disclosure.Panel>
           </DropTransition>
         </>
@@ -212,7 +244,7 @@ function AllTagList({
   tagData: TagData;
   tagEditable: Editable;
 }) {
-  console.log(tagData);
+  console.log(tagData,"tag data");
   const tagToolTip = useEditorToolTip();
   const editable: Editable = {
     name: tagData.path.split(".").pop() ?? "",
@@ -261,6 +293,10 @@ function AllTagList({
     </Disclosure>
   );
 }
+
+
+
+
 
 function TagGroupInfo({ tag }: { tag: Tag }) {
   if (!tag.list) return <h2>Invalid Tag Format!</h2>;

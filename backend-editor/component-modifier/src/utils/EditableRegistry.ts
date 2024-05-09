@@ -63,6 +63,7 @@ export class EditableRegistry {
           const attrFiles = await fs_p.readdir(attr.folderPath, {
             withFileTypes: true,
           });
+          
           for (const attrFile of attrFiles) {
             if (attrFile.isDirectory()) {
               await attr.add({
