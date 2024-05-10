@@ -28,11 +28,17 @@ export class FlowFileType extends FileTypeEditable {
   }
 
   async add(dataToAdd: Record<string, FlowObject[]>) {
-    this.setMissingReferences(dataToAdd);
-    const data = await this.getData();
-    const newData = mergeFlowObjectRecords(data, dataToAdd);
-    const yml = flowToNested(newData);
-    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
+    // this.setMissingReferences(dataToAdd);
+    let data = await this.getData();
+    data = data==undefined?{}:data
+    for(const key in dataToAdd){
+        data[key]= dataToAdd[key]
+    }
+
+    // const newData = mergeFlowObjectRecords(data, dataToAdd);
+
+    // const yml = flowToNested(data);
+    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(data));
   }
 
   async remove(dataToDel: FlowDel) {
@@ -57,26 +63,11 @@ export class FlowFileType extends FileTypeEditable {
     dataToUpdate: RecordOfFlowArrays | { oldName: string; newName: string }
   ) {
     const data = await this.getData();
-    if (
-      dataToUpdate.hasOwnProperty("oldName") &&
-      dataToUpdate.hasOwnProperty("newName") &&
-      !Array.isArray(dataToUpdate.newName) &&
-      !Array.isArray(dataToUpdate.oldName)
-    ) {
-      data[dataToUpdate.newName] = data[dataToUpdate.oldName];
-      delete data[dataToUpdate.oldName];
-    } else {
-      for (const key in dataToUpdate) {
-        if (data.hasOwnProperty(key)) {
-          data[key] = data[key].map((d) => {
-            const updated = dataToUpdate[key].find((u) => u.path === d.path);
-            return updated ? updated : d;
-          });
-        }
-      }
+    for(const key in dataToUpdate){
+        data[key]= dataToUpdate[key]
     }
-    const yml = flowToNested(data);
-    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
+    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(data));
+
   }
 
   private setMissingReferences(dataToAdd: Record<string, FlowObject[]>) {

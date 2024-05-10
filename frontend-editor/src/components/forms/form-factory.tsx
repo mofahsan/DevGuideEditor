@@ -8,8 +8,10 @@ import {
   CompFolderID,
   EnumFileId,
   EnumFolderID,
+  flowFolderID
 } from "../../pages/home-page";
 import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
+import { SummaryForm} from "./flow-form"
 import JsonField from "./JsonField";
 import { postData } from "../../utils/requestUtils";
 
@@ -75,7 +77,22 @@ const FormFactory = ({
             editState={editState}
           />
         );
-      default:
+        case flowFolderID:
+          if (data.query.addParams?.type === "enum") {
+            return (
+              <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
+            );
+          }
+          console.log(data,"charger")
+
+          return (
+            <SummaryForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );        
+        default:
         return <div>No form available for this type.</div>;
     }
   };

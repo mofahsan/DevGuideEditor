@@ -34,6 +34,7 @@ export class EnumFileType extends FileTypeEditable {
       }
     }
     console.log(dataToAdd);
+    
     const data = await this.getData();
     const newData = mergeEnumObjectRecords(data, dataToAdd);
     console.log(newData);

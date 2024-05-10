@@ -105,7 +105,8 @@ app.get("/guide/*", async (req, res, next) => {
 
 app.post("/guide/*", async (req, res, next) => { 
   try {
-    await history.addHistory(sessionInstances[currentSessionID]); // history is for undo
+
+    // await history.addHistory(sessionInstances[currentSessionID]); // history is for undo
     await target.add(req.body);
     return res.status(201).send("DATA ADDED");
   } catch (e) {

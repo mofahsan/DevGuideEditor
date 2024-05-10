@@ -8,17 +8,15 @@ export class FlowFolderType extends folderTypeEditable {
   constructor(path: string, name: string) {
     super(path, name);
     this.allowedList = [FlowFileType.REGISTER_ID];
-    // this.add({ ID: FlowFileType.REGISTER_ID, name: "default2" });
   }
 
   async add(newEditable: { ID: string; name: string }) {
-    if (!this.allowedList.includes(newEditable.ID)) {
-      throw new Error(`Enums only allow ${this.allowedList} as children.`);
-    }
     await super.add(newEditable);
+
     const addedChild = this.childrenEditables.find(
       (s) => s.name === newEditable.name
     );
+
     await updateYamlRefFlow(this.yamlPathLong, addedChild.name);
   }
 
@@ -42,13 +40,14 @@ export class FlowFolderType extends folderTypeEditable {
   }
 
   async remove(deleteTarget: { folderName: string }) {
-    if (deleteTarget.folderName === "default") {
-      throw new Error("Cannot delete the default Flow");
-    }
+  
     await super.remove(deleteTarget);
     // await updateYamlRefFlow(this.yamlPathLong, deleteTarget.folderName, true);
   }
+
+  
   async update(update: UpdateObj) {
+    
     await super.update(update);
     // await updateYamlRefFlow(this.yamlPathLong, update.oldName, true);
     // await updateYamlRefFlow(this.yamlPathLong, update.newName);

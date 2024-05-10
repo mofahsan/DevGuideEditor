@@ -85,6 +85,7 @@ export function EnumForm({
     data.query.updateParams?.enums?.length || 1
   );
   const defaultValues: Record<string, any> = {};
+  
   if (data.query.updateParams && !data.query.updateParams.oldName) {
     console.log(data.query.updateParams);
     defaultValues["path"] = data.query.updateParams.path;

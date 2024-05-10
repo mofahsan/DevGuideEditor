@@ -101,12 +101,14 @@ function explorePaths(
 }
 
 function convertDetailedPathsToNestedObjects(detailedPaths: FlowObject[]) {
+  
   function setPath(obj, path, value) {
     const keys = path.split(".");
     const lastKey = keys.pop();
     const lastObj = keys.reduce((obj, key) => (obj[key] = obj[key] || {}), obj);
     lastObj[lastKey] = value;
   }
+  
   const nestedObject = {};
   detailedPaths.forEach((element) => {
     setPath(nestedObject, element.path, element.Flow);
