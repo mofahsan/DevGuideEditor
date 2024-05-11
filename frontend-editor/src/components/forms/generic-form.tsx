@@ -12,7 +12,7 @@ const GenericForm = ({
   onSubmit: any;
   className: string;
 }) => {
-  const {
+  const { 
     register,
     handleSubmit,
     formState: { errors },

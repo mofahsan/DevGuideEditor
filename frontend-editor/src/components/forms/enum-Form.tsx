@@ -154,6 +154,8 @@ export function EnumForm({
             label={`Code : Description`}
             strip={false}
           />
+          
+          
         ))}
       </GenericForm>
       <div className="flex space-x-4 my-4 ml-2">

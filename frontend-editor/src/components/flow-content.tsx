@@ -15,6 +15,7 @@ import HorizontalTabBar from "./horizontal-tab";
 
 
 
+//ignore
 interface Tag {
   code: string;
   description: string;
@@ -25,31 +26,32 @@ interface Tag {
   }[];
 }
 
+// ignore
 interface TagData {
   path: string;
   tag: Tag[];
 }
-
+//ignore
 type TagResponse = Record<string, TagData[]>;
 
+// main component
 export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
-
 
   const [folderData, setFolderData] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>();
   const [editType, setEditType] = useState<any>(["select an option","flow","steps"]);
   const [selectedEditType, setSelectedEditType] = useState<any>(["flow","steps"]);
 
-console.log(selectedFolder)
+// console.log(selectedFolder)
   const reRender = useRef(false);
   async function getflowFolder() {
     try{
     // return
     const data = await getData(flowFolder.path);
-    console.log("myworld")
+    // console.log("myworld")
     setFolderData(data);
     reRender.current = !reRender.current;
-    console.log(data);
+    // console.log(data);
     }
     catch(err){
       console.log(err)
@@ -122,6 +124,7 @@ console.log(selectedFolder)
   );
 }
 
+// grandchild component
 export function TagContent({
   tags,
   reRender,
@@ -162,6 +165,7 @@ export function TagContent({
   );
 }
 
+// child component
 function TagDisclose({
   apiName,
   data,
@@ -215,18 +219,25 @@ function TagDisclose({
           </Disclosure.Button>
           <DropTransition>
             <Disclosure.Panel>
-              {
-                JSON.stringify(data)
-              }
-            {/* {data.map((tag, index) => (
-                <AllTagList
-                  key={index}
-                  tagData={tag}
-                  index={index}
-                  tagEditable={apiEditable}
-                />
-              ))}
-              {data.length === 0 && <div>No Enums</div>} */}
+              { apiName == "summary" && <div style={{backgroundColor:"red"}}>
+              {JSON.stringify(data)}
+              </div>}
+
+              { apiName == "details" && <div style={{backgroundColor:"blue"}}>
+              {JSON.stringify(data)}
+              </div>}
+              { apiName == "references" && <div style={{backgroundColor:"green"}}>
+              {JSON.stringify(data)}
+              </div>}
+              { apiName == "steps" && <div style={{backgroundColor:"pink"}}>
+              {JSON.stringify(data)}
+              </div>}
+              {/* <div >
+                
+              
+              </div> */}
+            
+        
             </Disclosure.Panel>
           </DropTransition>
         </>
@@ -235,114 +246,4 @@ function TagDisclose({
   );
 }
 
-function AllTagList({
-  index,
-  tagData,
-  tagEditable,
-}: {
-  index: number;
-  tagData: TagData;
-  tagEditable: Editable;
-}) {
-  console.log(tagData,"tag data");
-  const tagToolTip = useEditorToolTip();
-  const editable: Editable = {
-    name: tagData.path.split(".").pop() ?? "",
-    path: tagEditable.path,
-    deletePath: tagEditable.path,
-    registerID: tagEditable.registerID,
-    query: {
-      getData: tagEditable.query.getData,
-      Parent: tagEditable,
-      updateParams: { path: tagData.path, tags: tagData.tag },
-      deleteParams: {},
-      copyData: async () => {
-        const copyData: Record<string, TagData[]> = {};
-        copyData[tagEditable.name] = [tagData];
-        return JSON.stringify(copyData, null, 2);
-      },
-    },
-  };
-  if (editable.query.deleteParams) {
-    editable.query.deleteParams[tagEditable.name] = [
-      { path: tagData.path, tags: tagData.tag },
-    ];
-  }
-  tagToolTip.data.current = editable;
-  if (!tagData.tag) return <></>;
-  return (
-    <Disclosure key={index}>
-      <Disclosure.Button
-        className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
-        onContextMenu={tagToolTip.onContextMenu}
-      >
-        <Tippy {...tagToolTip.tippyProps}>
-          <div className="flex items-center">
-            <GoRelFilePath size={20} className="mr-2" />
-            <span>{tagData.path}</span>
-          </div>
-        </Tippy>
-      </Disclosure.Button>
-      <Disclosure.Panel>
-        <div className="ml-6 p-2 shadow-inner">
-          {tagData.tag.map((tag, index) => (
-            <TagGroupInfo key={index} tag={tag} />
-          ))}
-        </div>
-      </Disclosure.Panel>
-    </Disclosure>
-  );
-}
 
-
-
-
-
-function TagGroupInfo({ tag }: { tag: Tag }) {
-  if (!tag.list) return <h2>Invalid Tag Format!</h2>;
-  return (
-    <Disclosure>
-      <Disclosure.Button className="flex ml-8 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-blue-100 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg">
-        <div className="flex items-center">
-          <span className="text-blue-500">{tag.code}</span>
-        </div>
-      </Disclosure.Button>
-      <Disclosure.Panel className="ml-8 p-4 bg-blue-50 shadow-md">
-        <div className="mb-4">
-          <span className="font-bold">DESCRIPTION:</span>
-          <span className="ml-2 ">{tag.description}</span>
-        </div>
-        <div className="mb-4">
-          <span className="font-bold">REQUIRED:</span>
-          <span className="ml-2 ">{tag.required}</span>
-        </div>
-        <div>
-          <table className="min-w-full text-base">
-            <thead className="bg-blue-100">
-              <tr>
-                <th className="text-left font-bold text-blue-700 px-4 py-2">
-                  CODE
-                </th>
-                <th className="text-left font-bold text-blue-700 px-4 py-2">
-                  DESCRIPTION
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {tag.list.map((list, index) => (
-                <tr key={index} className="bg-blue-100 border-b">
-                  <td className="px-4 py-1 text-blue-500 font-semibold">
-                    {list.code}:
-                  </td>
-                  <td className="px-4 py-1 text-blue-500">
-                    {list.description}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Disclosure.Panel>
-    </Disclosure>
-  );
-}

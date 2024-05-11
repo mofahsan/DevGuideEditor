@@ -20,7 +20,7 @@ export default function RawModal({ isOpen, setIsOpen, item }: EditModalProps) {
   const dataContext = useContext(DataContext);
   useEffect(() => {
     if (!isOpen) return;
-    console.log("hello");
+    // console.log("hello");
     dataContext.setLoading(true);
     if (item.query.copyData) {
       item.query.copyData().then((data) => {

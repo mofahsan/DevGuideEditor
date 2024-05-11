@@ -37,7 +37,7 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
     const data = await getData(tagFolder.path);
     setFolderData(data);
     reRender.current = !reRender.current;
-    console.log(data);
+    // console.log(data);
   }
   tagFolder.query.getData = getTagFolder;
 
@@ -68,7 +68,7 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
     query: {
       Parent: tagFolder,
       getData: async () => {
-        console.log("hello");
+        // console.log("hello");
       },
     },
   };

@@ -26,10 +26,13 @@ interface TooltipProps {
 }
 
 export default function useEditorToolTip(buttonStates = [true, true, true]) {
+
+  // console.log("tooltip triggered")
   const [visible, setVisible] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
   const data = useRef<Editable>(null);
+  console.log(data,"is the data")
 
   const handleContextMenu = (event: any) => {
     event.preventDefault(); // Prevent the default context menu

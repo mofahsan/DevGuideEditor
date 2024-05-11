@@ -33,7 +33,7 @@ export const ComponentsStructure = ({
 }: ComponentsStructureProps) => {
   const dataContext = useContext(DataContext);
   const handleTabClick = (item: Editable) => {
-    console.log(item)
+    // console.log(item)
     dataContext.setActiveEditable(item);
   };
 

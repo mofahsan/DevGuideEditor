@@ -56,7 +56,7 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
     query: {
       Parent: enumFolder,
       getData: async () => {
-        console.log("hello");
+        // console.log("hello");
       },
     },
   };

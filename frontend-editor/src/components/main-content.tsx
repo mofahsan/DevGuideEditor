@@ -30,6 +30,8 @@ export function MainContent({
       {activeEditable?.registerID === TagFolderID && (
         <TagsFolderContent tagFolder={activeEditable} />
       )}
+      {/* activeEditable is nothing but the object containg information about current right side section
+      that is opened  */}
       {activeEditable?.registerID === flowFolderID && (
         <FlowFolderContent flowFolder={activeEditable} />
       )}

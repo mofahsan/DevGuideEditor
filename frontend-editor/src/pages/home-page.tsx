@@ -131,11 +131,13 @@ function ComponentView({
   return (
     <>
       <div className="flex w-full h-full overflow-hidden">
+        {/* sidebar component */}
         <ComponentsStructure
           componentsChildren={components}
           componentParent={parentComp}
         />
         <div className=" mt-20 ml-64 w-full">
+          {/* right side section component */}
           <MainContent activeEditable={activeEditable} />
         </div>
       </div>

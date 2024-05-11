@@ -31,6 +31,7 @@ const FormFactory = ({
   editState: boolean;
 }) => {
   const renderForm = () => {
+    console.log(data,"is the data ")
     switch (data.registerID) {
       case CompFolderID:
         return <AddInComponent data={data} setIsOpen={setIsOpen} />;
