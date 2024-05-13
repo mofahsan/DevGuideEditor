@@ -23,14 +23,14 @@ export function SummaryForm({
     editState: boolean;
   }) {
 
-    console.log(data,"is the data")
-    console.log(editState,"editState-->")
+    console.log(data,"is the data -->")
+    console.log(editState,"editState -->")
     const onSubmit = async (formData: Record<string, string>) => {
       const body: Record<string, any> = {};
-      console.log(formData)
-      body[formData.api] = [];
+      console.log(formData,"this is form data")
+      // body[formData.api] = [];
       console.log(body);
-      await postData(data.path, body);
+      await patchData(data.path, formData);
       await data.query.getData();
       console.log(data);
       setIsOpen(false);
@@ -41,7 +41,7 @@ export function SummaryForm({
         onSubmit={onSubmit}
         className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
       >
-        <FormInput name="api" label="summary" />
+        <FormInput name={data.name} label="summary" />
       </GenericForm>
     );
   }

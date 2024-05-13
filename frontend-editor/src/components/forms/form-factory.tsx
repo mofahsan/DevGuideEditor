@@ -95,13 +95,15 @@ const FormFactory = ({
             />
           );        
         case FlowFileID:
-          return (
-            <SummaryForm
-              data={data}
-              setIsOpen={setIsOpen}
-              editState={editState}
-            />
-          );        
+          if(data.name === 'summary' || data.name === 'references'){
+            return (
+              <SummaryForm
+                data={data}
+                setIsOpen={setIsOpen}
+                editState={editState}
+              />
+            );        
+          }
         default:
         return <div>No form available for this type.</div>;
     }

@@ -245,7 +245,7 @@ export function StepsContent({
                             <table className="w-full border-collapse table-auto">
                             <tbody>
                               {
-                             Object.keys(element).map(function(key) {
+                             Object.keys(element).map(function(key,index) {
                              
                              return  key != "details" ?(
                                     <tr>
@@ -264,7 +264,17 @@ export function StepsContent({
                                 {key}
                               </td>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {JSON.stringify(element[key][0])}
+                             {/* { element[key][0] && <MermaidDiagram chartDefinition={element[key][0]['mermaid']} keys={element[key][0]['mermaid']} /> } */}
+                                {element[key][0] && JSON.stringify(element[key][0]['description'])}
+                              </td>
+                              </tr>
+                              <tr>
+                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                {"diagram"}
+                              </td>
+                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                             { element[key][0] && <MermaidDiagram chartDefinition={element[key][0]['mermaid']} keys={index.toString()} /> }
+                                {/* {element[key][0] && JSON.stringify(element[key][0]['description'])} */}
                               </td>
                               </tr>
                             
@@ -289,7 +299,6 @@ export function StepsContent({
                               </tr> */}
                             </tbody>
                             </table>
-                          <p>ahsan</p>
                         <p><MermaidDiagram keys={index} chartDefinition={element.mermaid} /></p>
                           </div>
 
@@ -366,7 +375,7 @@ function TagDisclose({
   //  TagData[];
   tagEditable: Editable;
 }) {
-  const apiToolTip = useEditorToolTip();
+  const apiToolTip = useEditorToolTip([true,false,false]);
 
   const apiEditable = { ...tagEditable };
   apiEditable.name = apiName;

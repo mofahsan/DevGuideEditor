@@ -7,6 +7,7 @@ export interface MermaidProps {
 }
 
 export const MermaidDiagram: React.FC<MermaidProps> = ({ chartDefinition, keys }) => {
+  try{
   console.log(chartDefinition, "is chart definition");
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -14,7 +15,7 @@ export const MermaidDiagram: React.FC<MermaidProps> = ({ chartDefinition, keys }
     mermaid.initialize({
       startOnLoad: true,
       securityLevel: "loose",
-      theme: "forest",
+      // theme: "forest",
       logLevel: 5
     });
 
@@ -33,4 +34,8 @@ export const MermaidDiagram: React.FC<MermaidProps> = ({ chartDefinition, keys }
   }, [chartDefinition, keys]);
 
   return <div key={keys} ref={ref} />;
+}
+catch(err){
+  console.log(err)
+}
 };

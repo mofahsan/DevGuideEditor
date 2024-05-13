@@ -9,20 +9,12 @@ import { app as pathRouter } from "./routes/users";
 // var usersRouter = require('./routes/users');
 
 const app = express();
-app.use(
-  cors((req, callback) => {
-    const corsOptions = {
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS", // Allow these HTTP methods
-      credentials: true, // Allow cookies to be sent with the request
-      allowedHeaders: "Content-Type, Authorization, X-Requested-With", // Allow only these headers
-      corsOptions: {
-        origin: "*",
-      },
-    };
-
-    callback(null, corsOptions); // callback expects two parameters: error and options
-  })
-);
+app.use(cors({
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  allowedHeaders: "Content-Type, Authorization, X-Requested-With",
+  credentials: true
+}));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
