@@ -22,6 +22,9 @@ export function SummaryForm({
     setIsOpen: any;
     editState: boolean;
   }) {
+
+    console.log(data,"is the data")
+    console.log(editState,"editState-->")
     const onSubmit = async (formData: Record<string, string>) => {
       const body: Record<string, any> = {};
       console.log(formData)

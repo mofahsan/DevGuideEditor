@@ -8,6 +8,7 @@ import {
   CompFolderID,
   EnumFileId,
   EnumFolderID,
+  FlowFileID,
   flowFolderID
 } from "../../pages/home-page";
 import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
@@ -84,8 +85,16 @@ const FormFactory = ({
               <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
             );
           }
-          console.log(data,"charger")
+          console.log(data,"charger",editState)
 
+          return (
+            <SummaryForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );        
+        case FlowFileID:
           return (
             <SummaryForm
               data={data}

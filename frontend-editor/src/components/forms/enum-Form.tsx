@@ -119,6 +119,7 @@ export function EnumForm({
     await data.query.getData();
     setIsOpen(false);
   };
+  // updating folder name
   if (editState && data.query.updateParams?.oldName) {
     return (
       <GenericForm

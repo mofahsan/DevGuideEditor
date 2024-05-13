@@ -20,6 +20,7 @@ interface EnumData {
 }
 type EnumResponse = Record<string, EnumData[]>;
 
+// not being used in this folder
 export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
   const [folderData, setFolderData] = React.useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = React.useState<string>();
@@ -81,6 +82,7 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
   );
 }
 
+// main
 export function EnumContent({
   enums,
   reRender,
@@ -120,6 +122,7 @@ export function EnumContent({
   );
 }
 
+//child1 
 function EnumDisclose({
   apiName,
   data,
@@ -157,7 +160,7 @@ function EnumDisclose({
           <Disclosure.Button
             className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
           transition duration-300 ease-in-out"
-            onContextMenu={apiToolTip.onContextMenu}
+            // onContextMenu={apiToolTip.onContextMenu}
           >
             <Tippy {...apiToolTip.tippyProps}>
               <div className="flex items-center justify-between w-full">
@@ -192,6 +195,7 @@ function EnumDisclose({
   );
 }
 
+//child 2
 function EnumList({
   enumData,
   index,
@@ -226,10 +230,12 @@ function EnumList({
     ];
   }
   if (editable.query.updateParams) {
+
     editable.query.updateParams = {
       path: enumData.path,
       enums: enumData.enums,
     };
+    console.log(editable.query.updateParams,"update params")
   }
   enumToolTip.data.current = editable;
   return (
@@ -253,7 +259,8 @@ function EnumList({
     </Disclosure>
   );
 }
-
+ 
+//child 3
 function EnumTable({ enumList }: { enumList: Enum[] }) {
   enumList = enumList.map((e) => {
     const ob = { code: e.code, description: e.description };

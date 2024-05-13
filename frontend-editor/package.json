@@ -17,6 +17,7 @@
     "@tippyjs/react": "^4.2.6",
     "@types/react-icons": "^3.0.0",
     "axios": "^1.6.8",
+    "mermaid": "^10.9.0",
     "qs": "^6.12.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
