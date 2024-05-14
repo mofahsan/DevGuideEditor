@@ -9,12 +9,14 @@ import {
   EnumFileId,
   EnumFolderID,
   FlowFileID,
-  flowFolderID
+  flowFolderID,
 } from "../../pages/home-page";
 import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
-import { SummaryForm} from "./flow-form"
+import { SummaryForm } from "./flow-form";
 import JsonField from "./JsonField";
 import { postData } from "../../utils/requestUtils";
+import FormFlowDetail from "./form-flow-detail";
+import FormFlowStep from "./form-flow-step";
 
 export interface FormFacProps {
   data: Editable;
@@ -32,7 +34,7 @@ const FormFactory = ({
   editState: boolean;
 }) => {
   const renderForm = () => {
-    console.log(data,"is the data ")
+    console.log(data, "is the data ");
     switch (data.registerID) {
       case CompFolderID:
         return <AddInComponent data={data} setIsOpen={setIsOpen} />;
@@ -79,32 +81,48 @@ const FormFactory = ({
             editState={editState}
           />
         );
-        case flowFolderID:
-          if (data.query.addParams?.type === "enum") {
-            return (
-              <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
-            );
-          }
-          console.log(data,"charger",editState)
+      case flowFolderID:
+        if (data.query.addParams?.type === "enum") {
+          return (
+            <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
+          );
+        }
+        console.log(data, "charger", editState);
 
+        return (
+          <SummaryForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      case FlowFileID:
+        if (data.name === "summary" || data.name === "references") {
           return (
             <SummaryForm
               data={data}
               setIsOpen={setIsOpen}
               editState={editState}
             />
-          );        
-        case FlowFileID:
-          if(data.name === 'summary' || data.name === 'references'||data.name=="details"){
-            return (
-              <SummaryForm
-                data={data}
-                setIsOpen={setIsOpen}
-                editState={editState}
-              />
-            );        
-          }
-        default:
+          );
+        } else if (data.name === "details") {
+          return (
+            <FormFlowDetail
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        } else if (data.name === "steps") {
+          return (
+            <FormFlowStep
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+      default:
         return <div>No form available for this type.</div>;
     }
   };

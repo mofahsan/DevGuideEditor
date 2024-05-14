@@ -44,6 +44,12 @@ export default function EditorToolTip({
           {showEdit && (
             <button
               onClick={(e) => {
+                data.query.updateParams = data.query.updateParams
+                  ? {
+                      ...data.query.updateParams,
+                      buttonClicked: "edit",
+                    }
+                  : { buttonClicked: "edit" };
                 e.stopPropagation();
                 editState.current = true;
                 setEditModalState(true);
@@ -58,6 +64,12 @@ export default function EditorToolTip({
           {showAdd && (
             <button
               onClick={(e) => {
+                data.query.updateParams = data.query.updateParams
+                  ? {
+                      ...data.query.updateParams,
+                      buttonClicked: "new",
+                    }
+                  : { buttonClicked: "new" };
                 e.stopPropagation();
                 editState.current = false;
                 setEditModalState(true);

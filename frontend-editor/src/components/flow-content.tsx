@@ -136,7 +136,7 @@ export function DetailsContent({
   apiName,
   editable,
 }: any) {
-  const apiToolTip = useEditorToolTip();
+  const apiToolTip = useEditorToolTip([true, false, true]);
   const apiEditable = { ...editable };
   apiEditable.name = apiName;
   apiEditable.registerID = FlowFileID;
@@ -145,6 +145,8 @@ export function DetailsContent({
     Parent: editable,
     addParams: { type: "flow" },
     deleteParams: {},
+    updateParams: { data: detailData, type: "edit", index },
+    Params: {},
     copyData: async () => {
       const copyData: Record<string, TagData[]> = {};
       copyData[apiName] = detailData;
@@ -153,10 +155,6 @@ export function DetailsContent({
   };
   if (apiEditable.query.deleteParams) {
     apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
-  }
-  if (apiEditable.query.updateParams) {
-    apiEditable.query.updateParams = detailData[apiName];
-    console.log("update params triggered");
   }
   apiToolTip.data.current = apiEditable;
   React.useEffect(() => {
@@ -205,101 +203,116 @@ export function GenericContent({ data, reRender, apiName, editable }: any) {
 }
 
 // grandchild component
-export function StepsContent({ detailData, reRender, apiName }: any) {
-  const apiToolTip = useEditorToolTip();
+export function StepsContent({
+  detailData,
+  apiName,
+  element,
+  index,
+  editable,
+}: any) {
+  const apiToolTip = useEditorToolTip([true, false, true]);
 
-  const details = detailData.details;
-  delete detailData.details;
-
-  console.log(detailData[0]["details"][0]["description"], "detail data");
-
-  React.useEffect(() => {
-    // getTag();
-  }, [reRender]);
+  const apiEditable = { ...editable };
+  apiEditable.name = apiName;
+  apiEditable.registerID = FlowFileID;
+  apiEditable.query = {
+    getData: editable.query.getData,
+    Parent: editable,
+    addParams: { type: "flow" },
+    deleteParams: {},
+    updateParams: { data: detailData, type: "edit", index },
+    Params: {},
+    copyData: async () => {
+      const copyData: Record<string, TagData[]> = {};
+      copyData[apiName] = detailData;
+      return JSON.stringify(copyData, null, 2);
+    },
+  };
+  if (apiEditable.query.deleteParams) {
+    apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
+  }
+  apiToolTip.data.current = apiEditable;
 
   return (
     <>
-      {apiName == "steps" &&
-        detailData.map((element, index) => (
-          <Disclosure>
-            <Disclosure.Button
-              onContextMenu={apiToolTip.onContextMenu}
-              className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
-            >
-              <Tippy {...apiToolTip.tippyProps}>
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center">
-                    <CgMenuMotion size={20} className="mr-2" />
-                    <span>{element.summary}</span>
-                    <span className="flex items-end">{element.api}</span>
-                  </div>
-                  {open ? (
-                    <IoIosArrowDropdown size={25} />
-                  ) : (
-                    <IoIosArrowDropright size={25} />
-                  )}
+      {apiName == "steps" && (
+        <Disclosure>
+          <Disclosure.Button
+            onContextMenu={apiToolTip.onContextMenu}
+            className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+          >
+            <Tippy {...apiToolTip.tippyProps}>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center">
+                  <CgMenuMotion size={20} className="mr-2" />
+                  <span>{element.summary}</span>
+                  <span className="flex items-end">{element.api}</span>
                 </div>
-              </Tippy>
-            </Disclosure.Button>
-            <DropTransition>
-              <Disclosure.Panel>
-                <div className="ml-6 p-2 shadow-inner">
-                  <table className="w-full border-collapse table-auto">
-                    <tbody>
-                      {Object.keys(element).map(function (key, index) {
-                        return key != "details" ? (
+                {open ? (
+                  <IoIosArrowDropdown size={25} />
+                ) : (
+                  <IoIosArrowDropright size={25} />
+                )}
+              </div>
+            </Tippy>
+          </Disclosure.Button>
+          <DropTransition>
+            <Disclosure.Panel>
+              <div className="ml-6 p-2 shadow-inner">
+                <table className="w-full border-collapse table-auto">
+                  <tbody>
+                    {Object.keys(element).map(function (key, index) {
+                      return key != "details" ? (
+                        <tr>
+                          <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                            {key}
+                          </td>
+                          <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                            {JSON.stringify(element[key])}
+                          </td>
+                        </tr>
+                      ) : key == "details" ? (
+                        <>
                           <tr>
                             <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
                               {key}
                             </td>
                             <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                              {JSON.stringify(element[key])}
+                              {element[key][0] &&
+                                JSON.stringify(element[key][0]["description"])}
                             </td>
                           </tr>
-                        ) : key == "details" ? (
-                          <>
-                            <tr>
-                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {key}
-                              </td>
-                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {element[key][0] &&
-                                  JSON.stringify(
-                                    element[key][0]["description"]
-                                  )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {"diagram"}
-                              </td>
-                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {element[key][0] && (
-                                  <MermaidDiagram
-                                    chartDefinition={element[key][0]["mermaid"]}
-                                    keys={index.toString()}
-                                  />
-                                )}
-                              </td>
-                            </tr>
-                          </>
-                        ) : (
-                          <></>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                  <p>
-                    <MermaidDiagram
-                      keys={index}
-                      chartDefinition={element.mermaid}
-                    />
-                  </p>
-                </div>
-              </Disclosure.Panel>
-            </DropTransition>
-          </Disclosure>
-        ))}
+                          <tr>
+                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                              {"diagram"}
+                            </td>
+                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                              {element[key][0] && (
+                                <MermaidDiagram
+                                  chartDefinition={element[key][0]["mermaid"]}
+                                  keys={index.toString()}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        </>
+                      ) : (
+                        <></>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <p>
+                  <MermaidDiagram
+                    keys={index}
+                    chartDefinition={element.mermaid}
+                  />
+                </p>
+              </div>
+            </Disclosure.Panel>
+          </DropTransition>
+        </Disclosure>
+      )}
     </>
   );
 }
@@ -366,6 +379,10 @@ function TagDisclose({
     Parent: tagEditable,
     addParams: { type: "flow" },
     deleteParams: {},
+    updateParams: {
+      data,
+      ...((apiName === "details" || apiName === "steps") && { type: "new" })
+    },
     copyData: async () => {
       const copyData: Record<string, TagData[]> = {};
       copyData[apiName] = data;
@@ -374,10 +391,6 @@ function TagDisclose({
   };
   if (apiEditable.query.deleteParams) {
     apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
-  }
-  if (apiEditable.query.updateParams) {
-    apiEditable.query.updateParams = data[apiName];
-    console.log("update params triggered");
   }
   apiToolTip.data.current = apiEditable;
   console.log(data, "data looggg");
@@ -423,9 +436,18 @@ function TagDisclose({
                   />
                 ))}
               {apiName == "references" && <GenericContent data={data} />}
-              {apiName == "steps" && (
-                <StepsContent apiName={apiName} detailData={data} />
-              )}
+              {apiName == "steps" &&
+                // <StepsContent apiName={apiName} detailData={data} editable={tagEditable} />
+                data.map((element: any, index: number) => (
+                  <StepsContent
+                    key={index}
+                    detailData={data}
+                    element={element}
+                    index={index}
+                    apiName={apiName}
+                    editable={tagEditable}
+                  />
+                ))}
             </Disclosure.Panel>
           </DropTransition>
         </>
