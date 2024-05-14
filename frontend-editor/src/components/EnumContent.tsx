@@ -160,7 +160,7 @@ function EnumDisclose({
           <Disclosure.Button
             className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
           transition duration-300 ease-in-out"
-            // onContextMenu={apiToolTip.onContextMenu}
+             onContextMenu={apiToolTip.onContextMenu}
           >
             <Tippy {...apiToolTip.tippyProps}>
               <div className="flex items-center justify-between w-full">
