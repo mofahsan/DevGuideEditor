@@ -12,8 +12,7 @@ import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { GoRelFilePath } from "react-icons/go";
 import { DropTransition } from "./helper-components";
 import HorizontalTabBar from "./horizontal-tab";
-import {MermaidDiagram} from "../components/ui/mermaid"
-
+import { MermaidDiagram } from "../components/ui/mermaid";
 
 //ignore
 interface Tag {
@@ -29,33 +28,37 @@ interface Tag {
 // ignore
 interface TagData {
   path: string;
-  tag: 
-  Tag[];
+  tag: Tag[];
 }
 //ignore
 type TagResponse = Record<string, TagData[]>;
 
 // main component
 export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
-
   const [folderData, setFolderData] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string>();
-  const [editType, setEditType] = useState<any>(["select an option","flow","steps"]);
-  const [selectedEditType, setSelectedEditType] = useState<any>(["flow","steps"]);
+  const [editType, setEditType] = useState<any>([
+    "select an option",
+    "flow",
+    "steps",
+  ]);
+  const [selectedEditType, setSelectedEditType] = useState<any>([
+    "flow",
+    "steps",
+  ]);
 
-// console.log(selectedFolder)
+  // console.log(selectedFolder)
   const reRender = useRef(false);
   async function getflowFolder() {
-    try{
-    // return
-    const data = await getData(flowFolder.path);
-    // console.log("myworld")
-    setFolderData(data);
-    reRender.current = !reRender.current;
-    // console.log(data);
-    }
-    catch(err){
-      console.log(err)
+    try {
+      // return
+      const data = await getData(flowFolder.path);
+      // console.log("myworld")
+      setFolderData(data);
+      reRender.current = !reRender.current;
+      // console.log(data);
+    } catch (err) {
+      console.log(err);
     }
   }
   flowFolder.query.getData = getflowFolder;
@@ -95,27 +98,26 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
   return (
     <>
       <div className="mt-3 ml-3 max-w-full">
-
-      <div className="flex w-full">
-        <div className="flex-1">
-          <HorizontalTabBar
-            items={folderData}
-            selectedItem={selectedFolder ?? ""}
-            setSelectedItem={setSelectedFolder}
-            onOpen={getflowFolder}
-            editable={FolderEditable}
-          />
-        </div>
-        <div className="flex-1">
-          {/* <HorizontalTabBar
+        <div className="flex w-full">
+          <div className="flex-1">
+            <HorizontalTabBar
+              items={folderData}
+              selectedItem={selectedFolder ?? ""}
+              setSelectedItem={setSelectedFolder}
+              onOpen={getflowFolder}
+              editable={FolderEditable}
+            />
+          </div>
+          <div className="flex-1">
+            {/* <HorizontalTabBar
             items={editType}
             selectedItem={editType ?? ""}
             setSelectedItem={setEditType}
             onOpen={getflowFolder}
             editable={FolderEditable}
           /> */}
+          </div>
         </div>
-      </div>
 
         {selectedFolder && selectedFolder !== "" && (
           <TagContent tags={TagEditable} reRender={reRender.current} />
@@ -128,14 +130,16 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
 // grandchild component
 export function DetailsContent({
   detailData,
+  element,
+  index,
   reRender,
   apiName,
-  editable
+  editable,
 }: any) {
   const apiToolTip = useEditorToolTip();
   const apiEditable = { ...editable };
   apiEditable.name = apiName;
-  apiEditable.registerID = FlowFileID
+  apiEditable.registerID = FlowFileID;
   apiEditable.query = {
     getData: editable.query.getData,
     Parent: editable,
@@ -150,56 +154,43 @@ export function DetailsContent({
   if (apiEditable.query.deleteParams) {
     apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
   }
-  if(apiEditable.query.updateParams){
-    apiEditable.query.updateParams = detailData[apiName]
-    console.log("update params triggered")
+  if (apiEditable.query.updateParams) {
+    apiEditable.query.updateParams = detailData[apiName];
+    console.log("update params triggered");
   }
-  apiToolTip.data.current = apiEditable
+  apiToolTip.data.current = apiEditable;
   React.useEffect(() => {
     // getTag();
   }, [reRender]);
 
-  console.log('element', detailData)
+  // console.log("element", detailData);
   return (
     <>
-          {apiName == "details" &&
-                  detailData.map((element,index)=>
-                    <Disclosure key= {index}>
-                      <Disclosure.Button className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
-                                  onContextMenu={apiToolTip.onContextMenu}
-                                  >
-                      <Tippy {...apiToolTip.tippyProps}>
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <CgMenuMotion size={20} className="mr-2" />
-                  <span>{element.description}</span>
-                </div>
-                {open ? (
-                  <IoIosArrowDropdown size={25} />
-                ) : (
-                  <IoIosArrowDropright size={25} />
-                )}
+      {apiName == "details" && (
+        <Disclosure key={index}>
+          <Disclosure.Button
+            className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+            onContextMenu={apiToolTip.onContextMenu}
+          >
+            <Tippy {...apiToolTip.tippyProps}>
+              <div className="flex items-center">
+                <CgMenuMotion size={20} className="mr-2" />
+                <span>{element.description}</span>
               </div>
             </Tippy>
-                      </Disclosure.Button>
-                      <DropTransition>
-                        <Disclosure.Panel>
-                        {/* <p><MermaidDiagram keys={index} chartDefinition={element.mermaid} /></p> */}
-                        </Disclosure.Panel>
-                      </DropTransition>
-                      </Disclosure>                 
-                       )
-                }
+          </Disclosure.Button>
+          <Disclosure.Panel>
+            <p>
+              <MermaidDiagram keys={index} chartDefinition={element.mermaid} />
+            </p>
+          </Disclosure.Panel>
+        </Disclosure>
+      )}
     </>
   );
 }
 
-export function GenericContent({
-  data,
-  reRender,
-  apiName,
-  editable
-}: any) {
+export function GenericContent({ data, reRender, apiName, editable }: any) {
   const apiToolTip = useEditorToolTip();
 
   React.useEffect(() => {
@@ -207,28 +198,20 @@ export function GenericContent({
   }, [reRender]);
 
   return (
-    
     <div className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg">
       <p> {data}</p>
     </div>
   );
 }
 
-
-
 // grandchild component
-export function StepsContent({
-  detailData,
-  reRender,
-  apiName
-}: any) {
+export function StepsContent({ detailData, reRender, apiName }: any) {
   const apiToolTip = useEditorToolTip();
 
-  const details = detailData.details
-  delete detailData.details
+  const details = detailData.details;
+  delete detailData.details;
 
-  console.log(detailData[0]['details'][0]['description'],"detail data")
-  
+  console.log(detailData[0]["details"][0]["description"], "detail data");
 
   React.useEffect(() => {
     // getTag();
@@ -236,82 +219,87 @@ export function StepsContent({
 
   return (
     <>
-          {apiName == "steps" &&
-                  detailData.map((element,index)=>
-                    <Disclosure>
-                      <Disclosure.Button className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg">
-                      <Tippy {...apiToolTip.tippyProps}>
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <CgMenuMotion size={20} className="mr-2" />
-                  <span>{element.summary}</span>
-                  <span className="flex items-end">{element.api}</span>
-
+      {apiName == "steps" &&
+        detailData.map((element, index) => (
+          <Disclosure>
+            <Disclosure.Button
+              onContextMenu={apiToolTip.onContextMenu}
+              className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+            >
+              <Tippy {...apiToolTip.tippyProps}>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center">
+                    <CgMenuMotion size={20} className="mr-2" />
+                    <span>{element.summary}</span>
+                    <span className="flex items-end">{element.api}</span>
+                  </div>
+                  {open ? (
+                    <IoIosArrowDropdown size={25} />
+                  ) : (
+                    <IoIosArrowDropright size={25} />
+                  )}
                 </div>
-                {open ? (
-                  <IoIosArrowDropdown size={25} />
-                ) : (
-                  <IoIosArrowDropright size={25} />
-                )}
-              </div>
-            </Tippy>
-                      </Disclosure.Button>
-                      <DropTransition>
-                        <Disclosure.Panel>
-                          <div className="ml-6 p-2 shadow-inner">
-                            <table className="w-full border-collapse table-auto">
-                            <tbody>
-                              {
-                             Object.keys(element).map(function(key,index) {
-                             
-                             return  key != "details" ?(
-                                    <tr>
+              </Tippy>
+            </Disclosure.Button>
+            <DropTransition>
+              <Disclosure.Panel>
+                <div className="ml-6 p-2 shadow-inner">
+                  <table className="w-full border-collapse table-auto">
+                    <tbody>
+                      {Object.keys(element).map(function (key, index) {
+                        return key != "details" ? (
+                          <tr>
+                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                              {key}
+                            </td>
+                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                              {JSON.stringify(element[key])}
+                            </td>
+                          </tr>
+                        ) : key == "details" ? (
+                          <>
+                            <tr>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
                                 {key}
                               </td>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {JSON.stringify(element[key])}
+                                {element[key][0] &&
+                                  JSON.stringify(
+                                    element[key][0]["description"]
+                                  )}
                               </td>
                             </tr>
-                              )
-                            : key == 'details'?(
-                              <>
-                              <tr>
-                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {key}
-                              </td>
-                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                {element[key][0] && JSON.stringify(element[key][0]['description'])}
-                              </td>
-                              </tr>
-                              <tr>
+                            <tr>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
                                 {"diagram"}
                               </td>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                             { element[key][0] && <MermaidDiagram chartDefinition={element[key][0]['mermaid']} keys={index.toString()} /> }
+                                {element[key][0] && (
+                                  <MermaidDiagram
+                                    chartDefinition={element[key][0]["mermaid"]}
+                                    keys={index.toString()}
+                                  />
+                                )}
                               </td>
-                              </tr>
-                            
-                           
-                            </>
-                            ):<></>
-                          })
-                              }
-                            
-                       
-                 
-                            </tbody>
-                            </table>
-                        <p><MermaidDiagram keys={index} chartDefinition={element.mermaid} /></p>
-                          </div>
-
-                        </Disclosure.Panel>
-                      </DropTransition>
-                      </Disclosure>                 
-                       )
-                }
-  
+                            </tr>
+                          </>
+                        ) : (
+                          <></>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <p>
+                    <MermaidDiagram
+                      keys={index}
+                      chartDefinition={element.mermaid}
+                    />
+                  </p>
+                </div>
+              </Disclosure.Panel>
+            </DropTransition>
+          </Disclosure>
+        ))}
     </>
   );
 }
@@ -363,16 +351,16 @@ function TagDisclose({
   tagEditable,
 }: {
   apiName: string;
-  data: any
+  data: any;
   //  TagData[];
   tagEditable: Editable;
 }) {
-  const apiToolTip = useEditorToolTip([true,false,false]);
+  const apiToolTip = useEditorToolTip([true, false, false]);
 
   const apiEditable = { ...tagEditable };
   apiEditable.name = apiName;
-  console.log(apiName,"ahsan-->")
-  apiEditable.registerID = FlowFileID
+  console.log(apiName, "ahsan-->");
+  apiEditable.registerID = FlowFileID;
   apiEditable.query = {
     getData: tagEditable.query.getData,
     Parent: tagEditable,
@@ -387,11 +375,12 @@ function TagDisclose({
   if (apiEditable.query.deleteParams) {
     apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
   }
-  if(apiEditable.query.updateParams){
-    apiEditable.query.updateParams = data[apiName]
-    console.log("update params triggered")
+  if (apiEditable.query.updateParams) {
+    apiEditable.query.updateParams = data[apiName];
+    console.log("update params triggered");
   }
   apiToolTip.data.current = apiEditable;
+  console.log(data, "data looggg");
   return (
     <Disclosure>
       {({ open }) => (
@@ -417,20 +406,26 @@ function TagDisclose({
           </Disclosure.Button>
           <DropTransition>
             <Disclosure.Panel>
-
-              { apiName == "summary" && <GenericContent data = {data} editable = {tagEditable} />}
-
-              <DetailsContent detailData = {data} reRender = {false} apiName = {apiName} editable = {apiEditable} />
-
-              { apiName == "references" && <GenericContent data = {data} />}
-              
-              { apiName == "steps" && 
-              <StepsContent apiName = {apiName} detailData= {data} />
-            
-              }
-         
-            
-        
+              {apiName == "summary" && (
+                <GenericContent data={data} editable={tagEditable} />
+              )}
+              {open &&
+                apiName == "details" &&
+                data.map((element: any, index: number) => (
+                  <DetailsContent
+                    key={index}
+                    detailData={data}
+                    element={element}
+                    index={index}
+                    reRender={false}
+                    apiName={apiName}
+                    editable={tagEditable}
+                  />
+                ))}
+              {apiName == "references" && <GenericContent data={data} />}
+              {apiName == "steps" && (
+                <StepsContent apiName={apiName} detailData={data} />
+              )}
             </Disclosure.Panel>
           </DropTransition>
         </>
@@ -438,7 +433,3 @@ function TagDisclose({
     </Disclosure>
   );
 }
-
-
-
-
