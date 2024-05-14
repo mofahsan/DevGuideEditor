@@ -95,7 +95,7 @@ const FormFactory = ({
             />
           );        
         case FlowFileID:
-          if(data.name === 'summary' || data.name === 'references'){
+          if(data.name === 'summary' || data.name === 'references'||data.name=="details"){
             return (
               <SummaryForm
                 data={data}

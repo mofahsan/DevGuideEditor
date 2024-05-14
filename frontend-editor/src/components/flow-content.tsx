@@ -129,19 +129,45 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
 export function DetailsContent({
   detailData,
   reRender,
-  apiName
+  apiName,
+  editable
 }: any) {
   const apiToolTip = useEditorToolTip();
+  const apiEditable = { ...editable };
+  apiEditable.name = apiName;
+  apiEditable.registerID = FlowFileID
+  apiEditable.query = {
+    getData: editable.query.getData,
+    Parent: editable,
+    addParams: { type: "flow" },
+    deleteParams: {},
+    copyData: async () => {
+      const copyData: Record<string, TagData[]> = {};
+      copyData[apiName] = detailData;
+      return JSON.stringify(copyData, null, 2);
+    },
+  };
+  if (apiEditable.query.deleteParams) {
+    apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
+  }
+  if(apiEditable.query.updateParams){
+    apiEditable.query.updateParams = detailData[apiName]
+    console.log("update params triggered")
+  }
+  apiToolTip.data.current = apiEditable
   React.useEffect(() => {
     // getTag();
   }, [reRender]);
 
+  console.log('element', detailData)
   return (
     <>
           {apiName == "details" &&
                   detailData.map((element,index)=>
-                    <Disclosure>
-                      <Disclosure.Button className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg">
+                    <Disclosure key= {index}>
+                      <Disclosure.Button className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+                                  onContextMenu={apiToolTip.onContextMenu}
+                                  >
                       <Tippy {...apiToolTip.tippyProps}>
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
@@ -158,7 +184,7 @@ export function DetailsContent({
                       </Disclosure.Button>
                       <DropTransition>
                         <Disclosure.Panel>
-                        <p><MermaidDiagram keys={index} chartDefinition={element.mermaid} /></p>
+                        {/* <p><MermaidDiagram keys={index} chartDefinition={element.mermaid} /></p> */}
                         </Disclosure.Panel>
                       </DropTransition>
                       </Disclosure>                 
@@ -202,16 +228,7 @@ export function StepsContent({
   delete detailData.details
 
   console.log(detailData[0]['details'][0]['description'],"detail data")
-    
-
-  // const [tagData, setTagData] = useState<TagResponse>();
-
-  // async function getTag() {
-  //   const data = await getData(tags.path);
-  //   setTagData(data);
-  //   reRender = !reRender;
-  // }
-  // tags.query.getData = getTag;
+  
 
   React.useEffect(() => {
     // getTag();
@@ -264,7 +281,6 @@ export function StepsContent({
                                 {key}
                               </td>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                             {/* { element[key][0] && <MermaidDiagram chartDefinition={element[key][0]['mermaid']} keys={element[key][0]['mermaid']} /> } */}
                                 {element[key][0] && JSON.stringify(element[key][0]['description'])}
                               </td>
                               </tr>
@@ -274,29 +290,17 @@ export function StepsContent({
                               </td>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
                              { element[key][0] && <MermaidDiagram chartDefinition={element[key][0]['mermaid']} keys={index.toString()} /> }
-                                {/* {element[key][0] && JSON.stringify(element[key][0]['description'])} */}
                               </td>
                               </tr>
                             
                            
                             </>
-                              // <StepsContent apiName = {apiName} detailData= {element[key]} />
                             ):<></>
                           })
                               }
-                              {/* {
-                                <StepsContent apiName = {apiName} detailData= {details} />
-
-                              } */}
+                            
                        
-                              {/* <tr>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  Summary
-                                </td>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  {element.summary}
-                                </td>
-                              </tr> */}
+                 
                             </tbody>
                             </table>
                         <p><MermaidDiagram keys={index} chartDefinition={element.mermaid} /></p>
@@ -307,18 +311,6 @@ export function StepsContent({
                       </Disclosure>                 
                        )
                 }
-
-
-
-            {/* {tagData &&
-              Object.keys(tagData).map((apiName, index) => (
-                <TagDisclose
-                  key={index}
-                  apiName={apiName}
-                  data={tagData[apiName]}
-                  tagEditable={tags}
-                />
-              ))} */}
   
     </>
   );
@@ -379,6 +371,7 @@ function TagDisclose({
 
   const apiEditable = { ...tagEditable };
   apiEditable.name = apiName;
+  console.log(apiName,"ahsan-->")
   apiEditable.registerID = FlowFileID
   apiEditable.query = {
     getData: tagEditable.query.getData,
@@ -427,34 +420,15 @@ function TagDisclose({
 
               { apiName == "summary" && <GenericContent data = {data} editable = {tagEditable} />}
 
-              <DetailsContent detailData = {data} reRender = {false} apiName = {apiName} />
-{/* 
-                {apiName == "details" &&
-                  data.map((element,index)=>
-                    <Disclosure>
-                      <Disclosure.Button>
-                      <p>{element.description}</p>
-                      <p><MermaidDiagram keys={index} chartDefinition={element.mermaid} /></p>
-                      </Disclosure.Button>
-                      </Disclosure>                 
-                       )
-                } */}
+              <DetailsContent detailData = {data} reRender = {false} apiName = {apiName} editable = {apiEditable} />
 
-              {/* {JSON.stringify(data)}
-              </div>} */}
               { apiName == "references" && <GenericContent data = {data} />}
               
               { apiName == "steps" && 
               <StepsContent apiName = {apiName} detailData= {data} />
-              
-              // <div style={{backgroundColor:"pink"}}>
-              // {JSON.stringify(data)}
-              // </div>
+            
               }
-              {/* <div >
-                
-              
-              </div> */}
+         
             
         
             </Disclosure.Panel>
