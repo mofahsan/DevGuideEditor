@@ -3,6 +3,7 @@ import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
 import {FormInput, FormTextInput} from "./form-input";
 import { patchData } from "../../utils/requestUtils";
+import { toast } from "react-toastify";
 
 
 const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
@@ -11,9 +12,8 @@ const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
     data.query.updateParams &&
     data.query.updateParams?.type === "edit" &&
     data.query.updateParams?.data?.length
-  ) {
-    const detail =
-      data.query.updateParams?.data[data.query.updateParams?.index];
+  ){
+    const detail = data.query.updateParams?.data[data.query.updateParams?.index];
 
     defaultValue = {
       description: detail?.description,
@@ -23,6 +23,17 @@ const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
 
   const onSubmit = async (formData: Record<string, string>) => {
     let updatedPayload = [];
+
+    if(!formData?.description){
+      toast.error('description needed')
+      return;
+    }
+
+    if(!formData?.mermaid){
+      toast.error('mermaid needed')
+      return;
+    }
+
     if (
       data.query.updateParams &&
       data.query.updateParams?.type === "edit" &&

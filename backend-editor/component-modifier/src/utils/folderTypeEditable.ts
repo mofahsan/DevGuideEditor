@@ -55,6 +55,7 @@ export abstract class folderTypeEditable extends Editable {
     const target = this.childrenEditables.find(
       (s) => s.name === update.oldName
     );
+    console.log(target, ">>>>>>>>")
     try {
       await target.renameFolder(update.newName);
     } catch (e) {

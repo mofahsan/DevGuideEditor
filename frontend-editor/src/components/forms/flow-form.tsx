@@ -9,6 +9,7 @@ import { FormFacProps } from "./form-factory";
 import { FieldValues } from "react-hook-form";
 import FormSelect from "./form-select";
 import { EnumFileId } from "../../pages/home-page";
+import { toast } from "react-toastify";
 
 export function SummaryForm({
   data,
@@ -55,12 +56,14 @@ export function FlowFolderForm({
   editState: boolean;
 }) {
   let detailValues = {};
+  console.log("hello")
 
   if (data.query.updateParams && data.query.updateParams?.data) {
     detailValues = { [data.name]: data.query.updateParams?.data };
   }
 
   const onSubmit = async (formData: Record<string, string>) => {
+
     const body: Record<string, any> = {};
     //handle new
     if(data.query.updateParams.buttonClicked ==="new"){
@@ -76,7 +79,17 @@ export function FlowFolderForm({
     }
     // edit existing
     if(data.query.updateParams.buttonClicked ==="edit"){
+      const path : string[] = data.path.split('/')
+      path.pop()
+      const url = path.join("/")
+      let body
+      for(const key in formData){
+        body = {newName: formData[key]}
+      }
+      body.type = "sheetName";
+      body.oldName = data.name;
 
+      await patchData(url, body)
     }
     await data.query.getData();
     setIsOpen(false);

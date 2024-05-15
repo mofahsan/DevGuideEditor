@@ -3,6 +3,7 @@ import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
 import { patchData } from "../../utils/requestUtils";
 import {FormInput, FormTextInput} from "./form-input";
+import { toast } from "react-toastify";
 
 const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue = {};
@@ -25,6 +26,33 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   }
 
   const onSubmit = async (formData: Record<string, string>) => {
+
+    if(!formData?.summary){
+      toast.error('summary needed')
+      return;
+    }
+
+    if(!formData?.reference){
+      toast.error('reference needed')
+      return;
+    }
+
+    if(!formData?.api){
+      toast.error('api needed')
+      return;
+    }
+
+    if(!formData?.description){
+      toast.error('description needed')
+      return;
+    }
+
+    if(!formData?.mermaid){
+      toast.error('mermaid needed')
+      return;
+    }
+
+    
     let updatedPayload = [];
     const payload: any = {
       ...formData,
