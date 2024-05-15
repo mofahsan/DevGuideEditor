@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
 import { patchData } from "../../utils/requestUtils";
-import {FormInput, FormTextInput} from "./form-input";
+import { FormInput, FormTextInput } from "./form-input";
 import { toast } from "react-toastify";
 
+import FormSelect from "./form-select";
+import FlowPreview from "./flow-preview";
 const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue = {};
+  const [showJsonField, setShowJsonField] = useState(false);
+  const handleButtonClick = () => {
+    setShowJsonField(!showJsonField);
+  };
   if (
     data.query.updateParams &&
     data.query.updateParams?.type === "edit" &&
@@ -26,33 +32,31 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   }
 
   const onSubmit = async (formData: Record<string, string>) => {
-
-    if(!formData?.summary){
-      toast.error('summary needed')
+    if (!formData?.summary) {
+      toast.error("summary needed");
       return;
     }
 
-    if(!formData?.reference){
-      toast.error('reference needed')
+    if (!formData?.reference) {
+      toast.error("reference needed");
       return;
     }
 
-    if(!formData?.api){
-      toast.error('api needed')
+    if (!formData?.api) {
+      toast.error("api needed");
       return;
     }
 
-    if(!formData?.description){
-      toast.error('description needed')
+    if (!formData?.description) {
+      toast.error("description needed");
       return;
     }
 
-    if(!formData?.mermaid){
-      toast.error('mermaid needed')
+    if (!formData?.mermaid) {
+      toast.error("mermaid needed");
       return;
     }
 
-    
     let updatedPayload = [];
     const payload: any = {
       ...formData,
@@ -94,18 +98,43 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
 
   return (
     <div>
-      <GenericForm
-        onSubmit={onSubmit}
-        className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
-        defaultValues={defaultValue}
-      >
-        <FormInput name={`summary`} label={`Summary`} strip={false} />
-        <FormInput name={`reference`} label={`Reference`} strip={false} />
-        <FormInput name={`api`} label={`Api`} strip={false} />
-        <FormInput name={`description`} label={`Description`} strip={false} />
-        <FormTextInput name={`mermaid`} label={`Mermaid`} strip={false} />
-        <FormInput name={`example`} label={`Example`} strip={false} />
-      </GenericForm>
+      {!showJsonField && (
+        <GenericForm
+          onSubmit={onSubmit}
+          className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
+          defaultValues={defaultValue}
+        >
+          <FormInput name={`summary`} label={`Summary`} strip={false} />
+          <FormInput name={`reference`} label={`Reference`} strip={false} />
+          <FormInput name={`api`} label={`Api`} strip={false} />
+          <FormInput name={`description`} label={`Description`} strip={false} />
+          <FormTextInput name={`mermaid`} label={`Mermaid`} strip={false} />
+          <FormInput name={`example`} label={`Example`} strip={false} />
+          <FormSelect
+            register={"Select"}
+            name={"Example Drop-down"}
+            label={"Example Dropdown"}
+            options={["option1", "option2"]}
+            errors={"Error"}
+          />
+        </GenericForm>
+      )}
+      <div className=" relative">
+        {!showJsonField && (
+          <button
+            onClick={handleButtonClick}
+            className=" absolute right-3 bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+          >
+            Preview
+          </button>
+        )}
+      </div>
+      {showJsonField && (
+        <>
+          <div className=" font-medium">Preview</div>
+          <FlowPreview />
+        </>
+      )}
     </div>
   );
 };
