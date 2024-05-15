@@ -317,6 +317,9 @@ export function StepsContent({
     </>
   );
 }
+
+
+
 // showing summary/details/reference/steps etc
 export function FlowContent({
   flows,
@@ -328,7 +331,15 @@ export function FlowContent({
   const [flowData, setFlowData] = useState<FlowResponse>();
 
   async function getFlow() {
-    const data = await getData(flows.path);
+    let data = await getData(flows.path);
+    const dataArray = ['summary','details','references','steps']
+    let cleanedData = {}
+    if(data!== undefined){
+      dataArray.forEach((api)=>{
+        cleanedData[api]= data[api] || []
+    })
+    data = cleanedData
+  }
     setFlowData(data);
     reRender = !reRender;
   }
@@ -369,7 +380,8 @@ function FlowDisclose({
   //  FlowData[];
   flowEditable: Editable;
 }) {
-  const apiToolTip = useEditorToolTip([true, false, false]);
+
+  const apiToolTip = useEditorToolTip([true, true, false]);
 
   const apiEditable = { ...flowEditable };
   apiEditable.name = apiName;
@@ -393,12 +405,16 @@ function FlowDisclose({
   if (apiEditable.query.deleteParams) {
     apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
   }
+
+  
   apiToolTip.data.current = apiEditable;
+
   console.log(data, "data looggg");
   return (
     <Disclosure>
       {({ open }) => (
         <>
+        { (apiName === "summary" || apiName === "references") &&
           <Disclosure.Button
             className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
           transition duration-300 ease-in-out"
@@ -418,6 +434,28 @@ function FlowDisclose({
               </div>
             </Tippy>
           </Disclosure.Button>
+}
+{ (apiName === "details" || apiName === "steps") &&
+          <Disclosure.Button
+            className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
+          transition duration-300 ease-in-out"
+            onContextMenu={apiToolTip.onContextMenu}
+          >
+            <Tippy {...apiToolTip.tippyProps}>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center">
+                  <CgMenuMotion size={20} className="mr-2" />
+                  <span>{apiName}</span>
+                </div>
+                {open ? (
+                  <IoIosArrowDropdown size={25} />
+                ) : (
+                  <IoIosArrowDropright size={25} />
+                )}
+              </div>
+            </Tippy>
+          </Disclosure.Button>
+}
           <DropTransition>
             <Disclosure.Panel>
               {apiName == "summary" && (

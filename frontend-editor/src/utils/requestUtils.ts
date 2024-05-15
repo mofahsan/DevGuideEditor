@@ -23,6 +23,7 @@ export async function getData(path: string, query = {}) {
 
 export async function postData(path: string, data: any) {
   try {
+    console.log("post called")
     const url = `${baseURL}/${path}`;
     const response = await axios.post(url, data);
     return response.data;

@@ -12,12 +12,11 @@ import {
   flowFolderID,
 } from "../../pages/home-page";
 import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
-import { SummaryForm } from "./flow-form";
+import { SummaryForm,FlowFolderForm } from "./flow-form";
 import JsonField from "./JsonField";
 import { postData } from "../../utils/requestUtils";
 import FormFlowDetail from "./form-flow-detail";
 import FormFlowStep from "./form-flow-step";
-
 export interface FormFacProps {
   data: Editable;
   setIsOpen: any;
@@ -83,14 +82,15 @@ const FormFactory = ({
         );
       case flowFolderID:
         if (data.query.addParams?.type === "enum") {
+          console.log("ahsan--->")
           return (
             <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
           );
         }
-        console.log(data, "charger", editState);
+        console.log("shamsi--->")
 
         return (
-          <SummaryForm
+          <FlowFolderForm
             data={data}
             setIsOpen={setIsOpen}
             editState={editState}

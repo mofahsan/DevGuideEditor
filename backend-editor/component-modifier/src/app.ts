@@ -9,12 +9,7 @@ import { app as pathRouter } from "./routes/users";
 // var usersRouter = require('./routes/users');
 
 const app = express();
-app.use(cors({
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-  allowedHeaders: "Content-Type, Authorization, X-Requested-With",
-  credentials: true
-}));
+app.use(cors());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
