@@ -2,7 +2,7 @@ import React from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
 import { patchData } from "../../utils/requestUtils";
-import FormInput from "./form-input";
+import {FormInput, FormTextInput} from "./form-input";
 
 const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue = {};
@@ -53,7 +53,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     }
 
     try {
-      await patchData("components/flows/health-insurance", {
+      await patchData(data.path, {
         steps: updatedPayload,
       });
       await data.query.getData();
@@ -75,7 +75,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
         <FormInput name={`reference`} label={`Reference`} strip={false} />
         <FormInput name={`api`} label={`Api`} strip={false} />
         <FormInput name={`description`} label={`Description`} strip={false} />
-        <FormInput name={`mermaid`} label={`Mermaid`} strip={false} />
+        <FormTextInput name={`mermaid`} label={`Mermaid`} strip={false} />
         <FormInput name={`example`} label={`Example`} strip={false} />
       </GenericForm>
     </div>

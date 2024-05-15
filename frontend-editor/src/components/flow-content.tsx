@@ -15,7 +15,7 @@ import HorizontalTabBar from "./horizontal-tab";
 import { MermaidDiagram } from "../components/ui/mermaid";
 
 //ignore
-interface Tag {
+interface Flow {
   code: string;
   description: string;
   required: string;
@@ -26,12 +26,12 @@ interface Tag {
 }
 
 // ignore
-interface TagData {
+interface FlowData {
   path: string;
-  tag: Tag[];
+  flow: Flow[];
 }
 //ignore
-type TagResponse = Record<string, TagData[]>;
+type FlowResponse = Record<string, FlowData[]>;
 
 // main component
 export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
@@ -82,7 +82,7 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
       },
     },
   };
-  const TagEditable: Editable = {
+  const FlowEditable: Editable = {
     name: selectedFolder ?? "",
     path: flowFolder.path + "/" + selectedFolder,
     deletePath: flowFolder.path + "/" + selectedFolder,
@@ -120,7 +120,7 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
         </div>
 
         {selectedFolder && selectedFolder !== "" && (
-          <TagContent tags={TagEditable} reRender={reRender.current} />
+          <FlowContent flows={FlowEditable} reRender={reRender.current} />
         )}
       </div>
     </>
@@ -148,7 +148,7 @@ export function DetailsContent({
     updateParams: { data: detailData, type: "edit", index },
     Params: {},
     copyData: async () => {
-      const copyData: Record<string, TagData[]> = {};
+      const copyData: Record<string, FlowData[]> = {};
       copyData[apiName] = detailData;
       return JSON.stringify(copyData, null, 2);
     },
@@ -158,7 +158,7 @@ export function DetailsContent({
   }
   apiToolTip.data.current = apiEditable;
   React.useEffect(() => {
-    // getTag();
+    // getFlow();
   }, [reRender]);
 
   // console.log("element", detailData);
@@ -192,7 +192,7 @@ export function GenericContent({ data, reRender, apiName, editable }: any) {
   const apiToolTip = useEditorToolTip();
 
   React.useEffect(() => {
-    // getTag();
+    // getFlow();
   }, [reRender]);
 
   return (
@@ -223,7 +223,7 @@ export function StepsContent({
     updateParams: { data: detailData, type: "edit", index },
     Params: {},
     copyData: async () => {
-      const copyData: Record<string, TagData[]> = {};
+      const copyData: Record<string, FlowData[]> = {};
       copyData[apiName] = detailData;
       return JSON.stringify(copyData, null, 2);
     },
@@ -245,8 +245,9 @@ export function StepsContent({
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
                   <CgMenuMotion size={20} className="mr-2" />
-                  <span>{element.summary}</span>
-                  <span className="flex items-end">{element.api}</span>
+                  <span className="font-extrabold">{element.api}</span>
+                  <span className="flex items-end">: {element.summary}</span>
+                  
                 </div>
                 {open ? (
                   <IoIosArrowDropdown size={25} />
@@ -317,23 +318,23 @@ export function StepsContent({
   );
 }
 // showing summary/details/reference/steps etc
-export function TagContent({
-  tags,
+export function FlowContent({
+  flows,
   reRender,
 }: {
-  tags: Editable;
+  flows: Editable;
   reRender: Boolean;
 }) {
-  const [tagData, setTagData] = useState<TagResponse>();
+  const [flowData, setFlowData] = useState<FlowResponse>();
 
-  async function getTag() {
-    const data = await getData(tags.path);
-    setTagData(data);
+  async function getFlow() {
+    const data = await getData(flows.path);
+    setFlowData(data);
     reRender = !reRender;
   }
-  tags.query.getData = getTag;
+  flows.query.getData = getFlow;
   React.useEffect(() => {
-    getTag();
+    getFlow();
   }, [reRender]);
 
   return (
@@ -341,13 +342,13 @@ export function TagContent({
       <div className="mt-2 max-w-full">
         <div className="flex w-full">
           <div className="flex-1">
-            {tagData &&
-              Object.keys(tagData).map((apiName, index) => (
-                <TagDisclose
+            {flowData &&
+              Object.keys(flowData).map((apiName, index) => (
+                <FlowDisclose
                   key={index}
                   apiName={apiName}
-                  data={tagData[apiName]}
-                  tagEditable={tags}
+                  data={flowData[apiName]}
+                  flowEditable={flows}
                 />
               ))}
           </div>
@@ -358,25 +359,25 @@ export function TagContent({
 }
 
 // child component
-function TagDisclose({
+function FlowDisclose({
   apiName,
   data,
-  tagEditable,
+  flowEditable,
 }: {
   apiName: string;
   data: any;
-  //  TagData[];
-  tagEditable: Editable;
+  //  FlowData[];
+  flowEditable: Editable;
 }) {
   const apiToolTip = useEditorToolTip([true, false, false]);
 
-  const apiEditable = { ...tagEditable };
+  const apiEditable = { ...flowEditable };
   apiEditable.name = apiName;
   console.log(apiName, "ahsan-->");
-  apiEditable.registerID = FlowFileID;
+  apiEditable.registerID = FlowFileID
   apiEditable.query = {
-    getData: tagEditable.query.getData,
-    Parent: tagEditable,
+    getData: flowEditable.query.getData,
+    Parent: flowEditable,
     addParams: { type: "flow" },
     deleteParams: {},
     updateParams: {
@@ -384,7 +385,7 @@ function TagDisclose({
       ...((apiName === "details" || apiName === "steps") && { type: "new" })
     },
     copyData: async () => {
-      const copyData: Record<string, TagData[]> = {};
+      const copyData: Record<string, FlowData[]> = {};
       copyData[apiName] = data;
       return JSON.stringify(copyData, null, 2);
     },
@@ -420,7 +421,7 @@ function TagDisclose({
           <DropTransition>
             <Disclosure.Panel>
               {apiName == "summary" && (
-                <GenericContent data={data} editable={tagEditable} />
+                <GenericContent data={data} editable={flowEditable} />
               )}
               {open &&
                 apiName == "details" &&
@@ -432,12 +433,12 @@ function TagDisclose({
                     index={index}
                     reRender={false}
                     apiName={apiName}
-                    editable={tagEditable}
+                    editable={flowEditable}
                   />
                 ))}
               {apiName == "references" && <GenericContent data={data} />}
               {apiName == "steps" &&
-                // <StepsContent apiName={apiName} detailData={data} editable={tagEditable} />
+                // <StepsContent apiName={apiName} detailData={data} editable={flowEditable} />
                 data.map((element: any, index: number) => (
                   <StepsContent
                     key={index}
@@ -445,7 +446,7 @@ function TagDisclose({
                     element={element}
                     index={index}
                     apiName={apiName}
-                    editable={tagEditable}
+                    editable={flowEditable}
                   />
                 ))}
             </Disclosure.Panel>
