@@ -26,7 +26,7 @@ export function EnumFolderForm({ data, setIsOpen, editState }: FormFacProps) {
         onSubmit={onPost}
         className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
       >
-        <FormSelect name="ID" label="Attribute Type" options={[EnumFileId]} />
+        <FormSelect name="ID" label="Type" options={[EnumFileId]} />
         <FormInput name="name" label="Domain" strip={true} />
       </GenericForm>
     </>
@@ -57,7 +57,7 @@ export function EnumForm({
       return;
     }
     for (let i = 0; i < enumNumber; i++) {
-      const enumData = formData[`enum${i}`].split(":");
+      const enumData = formData[`enum${i}`].split("::");
 
       if (enumData.length !== 2) {
         alert(`Invalid enum format ${enumData}`);
@@ -90,7 +90,7 @@ export function EnumForm({
     console.log(data.query.updateParams);
     defaultValues["path"] = data.query.updateParams.path;
     data.query.updateParams.enums.forEach((item: any, index: number) => {
-      defaultValues[`enum${index}`] = `${item.code} : ${item.description}`;
+      defaultValues[`enum${index}`] = `${item.code} :: ${item.description}`;
     });
   }
 
@@ -126,7 +126,11 @@ export function EnumForm({
         onSubmit={onPatch}
         className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
       >
-        <FormInput name="newName" label="New Name" required={true} />
+        <FormInput
+          name="newName"
+          label={`Rename: ${data.name}`}
+          required={true}
+        />
       </GenericForm>
     );
   }
@@ -152,7 +156,7 @@ export function EnumForm({
           <FormInput
             key={index}
             name={`enum${index}`}
-            label={`Code : Description`}
+            label={`Code :: Description`}
             strip={false}
           />
           

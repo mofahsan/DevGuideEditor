@@ -3,12 +3,12 @@ import { Editable } from "./file-structure";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { CgMenuMotion } from "react-icons/cg";
-import { GoRelFilePath } from "react-icons/go";
 import { getData } from "../utils/requestUtils";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
 import Dropdown from "./horizontal-tab";
 import { DropTransition } from "./helper-components";
+import { VscJson } from "react-icons/vsc";
 
 interface Enum {
   code: string;
@@ -28,6 +28,9 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
   async function getEnumFolder() {
     const data = await getData(enumFolder.path);
     setFolderData(data);
+    if (data.length > 0 && !selectedFolder) {
+      setSelectedFolder(data[0]);
+    }
     reRender.current = !reRender.current;
   }
   enumFolder.query.getData = getEnumFolder;
@@ -246,7 +249,7 @@ function EnumList({
       >
         <Tippy {...enumToolTip.tippyProps}>
           <div className="flex items-center">
-            <GoRelFilePath size={20} className="mr-2" />
+            <VscJson size={20} className="mr-2" />
             <span>{enumData.path}</span>
           </div>
         </Tippy>

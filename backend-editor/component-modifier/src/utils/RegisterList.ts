@@ -8,6 +8,8 @@ import { TagsFolderType } from "./ComponentType/tagType/tagsFolderType";
 import { TagFileType } from "./ComponentType/tagType/tagFileType";
 import { FlowFolderType } from "./ComponentType/flowType/flowFolderType";
 import { FlowFileType } from "./ComponentType/flowType/flowFileType";
+import { ExampleFolderType } from "./ComponentType/examplesType/exampleFolderType";
+import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
 
 export function initRegistry() {
   EditableRegistry.register(ComponentsType);
@@ -21,6 +23,8 @@ export function initRegistry() {
   EditableRegistry.register(FlowFileType);
 
 
+  EditableRegistry.register(ExampleFolderType);
+  EditableRegistry.register(ExampleDomainFolderType);
 }
 
 export const FixedNames = {

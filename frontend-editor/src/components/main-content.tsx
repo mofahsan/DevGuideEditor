@@ -4,6 +4,7 @@ import { Editable } from "./file-structure";
 import {
   AttributeFolderID,
   EnumFolderID,
+  ExampleFolderID,
   TagFolderID,
   flowFolderID
   
@@ -12,12 +13,15 @@ import {
 import { EnumContent, EnumFolderContent } from "./EnumContent";
 import { TagsFolderContent } from "./tag-content";
 import {FlowFolderContent} from "./flow-content"
+import { ExampleContent } from "./example-content";
 
 export function MainContent({
   activeEditable,
 }: {
   activeEditable: Editable | undefined;
 }) {
+  console.log(activeEditable,"activeEditable")
+
   if (!activeEditable) return <></>;
   return (
     <>
@@ -35,6 +39,10 @@ export function MainContent({
       {activeEditable?.registerID === flowFolderID && (
         <FlowFolderContent flowFolder={activeEditable} />
       )}
+      {activeEditable?.registerID === ExampleFolderID && (
+        <ExampleContent exampleEditable={activeEditable} />
+      )}
     </>
   );
+  
 }

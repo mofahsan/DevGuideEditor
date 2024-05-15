@@ -8,6 +8,7 @@ import { EnumFileType } from "./enumType/enumFileType";
 import { EnumFolderType } from "./enumType/enumFolderType";
 import { TagsFolderType } from "./tagType/tagsFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
+import { ExampleFolderType } from "./examplesType/exampleFolderType";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
@@ -20,7 +21,8 @@ export class ComponentsType extends folderTypeEditable {
       AttributesFolderTypeEditable.REGISTER_ID,
       EnumFolderType.REGISTER_ID,
       TagsFolderType.REGISTER_ID,
-      FlowFolderType.REGISTER_ID
+      FlowFolderType.REGISTER_ID,
+      ExampleFolderType.REGISTER_ID
     ];
   }
 
@@ -78,6 +80,9 @@ export class ComponentsType extends folderTypeEditable {
     }
     if (ID === FlowFolderType.REGISTER_ID) {
       return "flows";
+    }
+    if (ID === ExampleFolderType.REGISTER_ID) {
+      return "examples";
     }
     return "UNKNOWN";
   }

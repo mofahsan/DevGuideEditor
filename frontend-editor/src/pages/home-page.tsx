@@ -22,10 +22,8 @@ export const TagFolderID = "TAG_FOLDER";
 export const TagFileID = "TAG_FILE";
 export const flowFolderID = "FLOW_FOLDER";
 export const FlowFileID = "FLOW_FILE"; 
-
-
-
-
+export const ExampleFolderID = "EXAMPLE_FOLDER";
+export const ExampleDomainFolderID = "EXAMPLE_DOMAIN_FOLDER";
 
 export function HomePage() {
   const [loading, setLoading] = React.useState(false);

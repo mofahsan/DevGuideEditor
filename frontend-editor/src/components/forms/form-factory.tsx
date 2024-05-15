@@ -10,6 +10,10 @@ import {
   EnumFolderID,
   FlowFileID,
   flowFolderID,
+  ExampleDomainFolderID,
+  ExampleFolderID,
+  TagFileID,
+  TagFolderID,
 } from "../../pages/home-page";
 import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
 import { SummaryForm,FlowFolderForm } from "./flow-form";
@@ -17,6 +21,19 @@ import JsonField from "./JsonField";
 import { postData } from "../../utils/requestUtils";
 import FormFlowDetail from "./form-flow-detail";
 import FormFlowStep from "./form-flow-step";
+import {
+  TagApiForm,
+  TagCodesForm,
+  TagFolderForm,
+  TagGroupForm,
+  TagPathForm,
+} from "./tag-forms";
+import {
+  AddExampleJsonForm,
+  AddNewExampleForm,
+  ExampleDomainForm,
+} from "./example-form";
+
 export interface FormFacProps {
   data: Editable;
   setIsOpen: any;
@@ -33,8 +50,9 @@ const FormFactory = ({
   editState: boolean;
 }) => {
   const renderForm = () => {
-    console.log(data, "is the data ");
-    switch (data.registerID) {
+    const formPath = data.registerID.split("/")[0];
+    console.log("Form Path", formPath);
+    switch (formPath) {
       case CompFolderID:
         return <AddInComponent data={data} setIsOpen={setIsOpen} />;
       case AttributeFolderID:
@@ -82,15 +100,30 @@ const FormFactory = ({
         );
       case flowFolderID:
         if (data.query.addParams?.type === "enum") {
-          console.log("ahsan--->")
           return (
             <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
           );
         }
-        console.log("shamsi--->")
 
         return (
           <FlowFolderForm
+          data={data}
+          setIsOpen={setIsOpen}
+          editState={editState}
+        />
+      );
+      case TagFolderID:
+        if (data.query.addParams?.formType === "addAPI") {
+          return (
+            <TagApiForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        return (
+          <TagFolderForm
             data={data}
             setIsOpen={setIsOpen}
             editState={editState}
@@ -116,12 +149,66 @@ const FormFactory = ({
         } else if (data.name === "steps") {
           return (
             <FormFlowStep
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      }
+      case TagFileID:
+        if (data.query.addParams?.formType === "addTag") {
+          return (
+            <TagCodesForm
               data={data}
               setIsOpen={setIsOpen}
               editState={editState}
             />
           );
         }
+        if (data.query.addParams?.formType === "addTagGroup") {
+          return (
+            <TagGroupForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        return (
+          <TagPathForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      case ExampleFolderID:
+        // if (data.query.addParams?.formType === "addDomain") {
+        //   return <></>;
+        // }
+        return (
+          <ExampleDomainForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      case ExampleDomainFolderID:
+        if (data.query.addParams?.formType === "AddExample") {
+          return (
+            <AddExampleJsonForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        return (
+          <AddNewExampleForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
       default:
         return <div>No form available for this type.</div>;
     }
