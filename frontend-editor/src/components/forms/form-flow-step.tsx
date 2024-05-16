@@ -58,16 +58,6 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
 
   }
 
-  const selectData = data.query.updateParams?.data[data.query.updateParams?.index].example.value.$ref;
-  
-  let selectOptions = selectData.replace("../../", "/");
-  const newPath = data.path.split('/');
-  const newPathOptions = newPath[0] + selectOptions;
-  let path = newPathOptions.split('/');
-  path.pop();
-  path.pop();
-  const str = path.join("/")
-  const res = await getData(str)
 
   const onSubmit = async (formData: Record<string, string>) => {
     if (!formData?.summary) {
