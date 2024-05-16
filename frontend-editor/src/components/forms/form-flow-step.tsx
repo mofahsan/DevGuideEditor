@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
-<<<<<<< HEAD
-import { getData, patchData } from "../../utils/requestUtils";
-=======
 import { patchData,getData } from "../../utils/requestUtils";
->>>>>>> 539aa269a2ec89542a27abfd18570a25157c9a0f
-
 import { FormInput, FormTextInput } from "./form-input";
 import { toast } from "react-toastify";
 
