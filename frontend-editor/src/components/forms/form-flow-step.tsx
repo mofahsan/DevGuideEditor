@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 import FormSelect from "./form-select";
 import FlowPreview from "./flow-preview";
-const FormFlowStep = async ({ data, setIsOpen }: FormFacProps) => {
+const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue = {};
   const [showJsonField, setShowJsonField] = useState(false);
   const [exampleArray, setexampleArray] = useState([false]);
