@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
-import { patchData } from "../../utils/requestUtils";
+import { patchData,getData } from "../../utils/requestUtils";
 import { FormInput, FormTextInput } from "./form-input";
 import { toast } from "react-toastify";
 
@@ -10,6 +10,13 @@ import FlowPreview from "./flow-preview";
 const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue = {};
   const [showJsonField, setShowJsonField] = useState(false);
+  const [exampleArray, setexampleArray] = useState([false]);
+
+
+  useEffect(()=>{
+    fetchExamples()
+  },[])
+  let detail
   const handleButtonClick = () => {
     setShowJsonField(!showJsonField);
   };
@@ -18,7 +25,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     data.query.updateParams?.type === "edit" &&
     data.query.updateParams?.data?.length
   ) {
-    const detail =
+     detail =
       data.query.updateParams?.data[data.query.updateParams?.index];
 
     defaultValue = {
@@ -29,6 +36,26 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       mermaid: detail?.details[0]?.mermaid || "",
       example: JSON.stringify(detail?.example),
     };
+  }
+  // fetch examples
+  async function fetchExamples(){
+    const path = data?.path?.replace("flows","examples")
+    const examples = await getData(path)
+    console.log(examples)
+
+    const exampleArray = examples[detail?.api].map((element)=> {
+      return {
+        name:element.summary,
+          json: element.exampleJson,
+          ref : element['$ref']
+      }
+      // return element.summary
+      
+    }
+
+  )
+    setexampleArray(exampleArray)
+
   }
 
   const onSubmit = async (formData: Record<string, string>) => {
@@ -114,7 +141,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
             register={"Select"}
             name={"Example Drop-down"}
             label={"Example Dropdown"}
-            options={["option1", "option2"]}
+            options={exampleArray}
             errors={"Error"}
           />
         </GenericForm>
