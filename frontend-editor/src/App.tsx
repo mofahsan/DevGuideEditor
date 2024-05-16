@@ -11,10 +11,6 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { ImSun } from "react-icons/im";
-import { FaMoon } from "react-icons/fa";
-import 'react-toastify/dist/ReactToastify.css';
-
 
 function App() {
   const navigate = useNavigate();
