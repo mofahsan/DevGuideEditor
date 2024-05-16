@@ -5,7 +5,6 @@ import yaml from "js-yaml";
 import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
 import { overrideYaml } from "./yamlUtils";
 import { loadYamlWithRefs, readYamlFile } from "./fileUtils";
-import { describe } from "node:test";
 import {
   ExampleDomainIndexYml,
   ExampleFolderType,
@@ -193,11 +192,19 @@ export class EditableRegistry {
       if (!file.isDirectory()) continue;
       const exampleDomainName = file.name;
       const subIndexPath = `${exampleFolder.folderPath}/${exampleDomainName}/index.yaml`;
+      const secondaryPath = `${exampleFolder.folderPath}/${exampleDomainName}/${exampleDomainName}.yaml`;
       let subYamlData: ExampleDomainIndexYml = {};
       if (fs.existsSync(subIndexPath)) {
-        subYamlData = yaml.load(
-          await readYamlFile(subIndexPath)
-        ) as ExampleDomainIndexYml;
+        subYamlData = (await loadYamlWithRefs(
+          subIndexPath
+        )) as ExampleDomainIndexYml;
+
+        subYamlData = subYamlData || {};
+      } else if (fs.existsSync(secondaryPath)) {
+        subYamlData = (await loadYamlWithRefs(
+          secondaryPath
+        )) as ExampleDomainIndexYml;
+
         subYamlData = subYamlData || {};
       }
 
@@ -219,24 +226,53 @@ export class EditableRegistry {
       });
       console.log("sub data", subYamlData);
       for (const subFile of subFiles) {
-        const exampleFileName = subFile.name;
         if (!subFile.isDirectory()) continue;
-        if (subFile.name === "forms") continue;
+        // if (subFile.name === "forms") {
+        //   console.log(subFile.name, "inside");
+        //   const forms = await fs_p.readdir(subFile.path, {
+        //     withFileTypes: true,
+        //   });
+        //   // console.log(forms);
+        //   for (const f of forms) {
+        //     const html = await fs_p.readFile(f.path);
+        //     await addedExample.add({
+        //       name: subFile.name,
+        //       ID: "FORM",
+        //       examples: {
+        //         [subFile.name]: [
+        //           {
+        //             name: subFile.name,
+        //             ID: "FORM",
+        //             exampleName: " ",
+        //             summary: f.name,
+        //             description: " ",
+        //             exampleValue: html,
+        //           },
+        //         ],
+        //       },
+        //     });
+        //   }
+        // }
 
         if (subYamlData.hasOwnProperty(subFile.name)) {
           const data = subYamlData[subFile.name];
+          ForceUniqueSummary(data);
           for (const example of data.examples) {
             await addedExample.add({
-              ID: "JSON",
               name: subFile.name,
-              exampleName: example.value.$ref.split("/").pop().split(".")[0],
-              summary: example.summary,
-              description: example.description,
-              exampleValue: await yaml.load(
-                await readYamlFile(
-                  path.resolve(addedExample.folderPath, example.value.$ref)
-                )
-              ),
+              ID: "JSON",
+              examples: {
+                [subFile.name]: [
+                  {
+                    ID: "JSON",
+                    name: subFile.name,
+                    exampleName: " ",
+                    summary: example.summary,
+                    description: example.description,
+                    exampleValue: example.value,
+                  },
+                ],
+              },
             });
           }
         }
@@ -245,6 +281,30 @@ export class EditableRegistry {
   }
 }
 
+function ForceUniqueSummary(data: {
+  examples: { summary: string; description: string; value: { $ref: string } }[];
+}) {
+  const summaryCounts = data.examples
+    .map((s) => s.summary.trim())
+    .reduce((acc, summary) => {
+      acc[summary] = (acc[summary] || 0) + 1;
+      return acc;
+    }, {});
+  // Step 2: Create a map to track the number of times each summary has been encountered
+  const summaryTracker = {};
+
+  // Step 3: Modify summaries that occur more than once
+  data.examples.forEach((example) => {
+    const summary = example.summary;
+    if (summaryCounts[summary] > 1) {
+      if (!summaryTracker[summary]) {
+        summaryTracker[summary] = 0;
+      }
+      summaryTracker[summary]++;
+      example.summary = `${summary}-${summaryTracker[summary]}`;
+    }
+  });
+}
 // (async () => {
 //   initRegistry();
 //   console.log(

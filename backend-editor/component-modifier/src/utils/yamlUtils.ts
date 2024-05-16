@@ -107,12 +107,21 @@ export async function updateYamlRefExampleDomain(
     let data = yaml.load(await readYamlFile(filePath));
     data = data || {};
     if (data[section]) {
-      const existing = data[section].examples;
+      const existing: {
+        summary: string;
+        description: string;
+        value: { $ref: string };
+      }[] = data[section].examples;
+
       if (existing) {
-        refToAdd = [...existing, ...refToAdd];
+        const filtered = existing.filter((s) =>
+          refToAdd.every((r) => r.value.$ref !== s.value.$ref)
+        );
+        refToAdd = [...filtered, ...refToAdd];
       }
     }
   }
+
   await updateYamlRef(
     filePath,
     section,
