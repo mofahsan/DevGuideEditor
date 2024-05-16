@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
-import { patchData } from "../../utils/requestUtils";
+import { getData, patchData } from "../../utils/requestUtils";
 import { FormInput, FormTextInput } from "./form-input";
 import { toast } from "react-toastify";
 
 import FormSelect from "./form-select";
 import FlowPreview from "./flow-preview";
-const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
+const FormFlowStep = async ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue = {};
   const [showJsonField, setShowJsonField] = useState(false);
   const handleButtonClick = () => {
@@ -30,6 +30,17 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       example: JSON.stringify(detail?.example),
     };
   }
+
+  const selectData = data.query.updateParams?.data[data.query.updateParams?.index].example.value.$ref;
+  
+  let selectOptions = selectData.replace("../../", "/");
+  const newPath = data.path.split('/');
+  const newPathOptions = newPath[0] + selectOptions;
+  let path = newPathOptions.split('/');
+  path.pop();
+  path.pop();
+  const str = path.join("/")
+  const res = await getData(str)
 
   const onSubmit = async (formData: Record<string, string>) => {
     if (!formData?.summary) {
@@ -114,7 +125,8 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
             register={"Select"}
             name={"Example Drop-down"}
             label={"Example Dropdown"}
-            options={["option1", "option2"]}
+            options={res}
+            api={`api`}
             errors={"Error"}
           />
         </GenericForm>
