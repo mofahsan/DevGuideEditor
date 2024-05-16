@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
+<<<<<<< HEAD
 import { getData, patchData } from "../../utils/requestUtils";
+=======
+import { patchData,getData } from "../../utils/requestUtils";
+>>>>>>> 539aa269a2ec89542a27abfd18570a25157c9a0f
+
 import { FormInput, FormTextInput } from "./form-input";
 import { toast } from "react-toastify";
 
@@ -10,6 +15,13 @@ import FlowPreview from "./flow-preview";
 const FormFlowStep = async ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue = {};
   const [showJsonField, setShowJsonField] = useState(false);
+  const [exampleArray, setexampleArray] = useState([false]);
+
+
+  useEffect(()=>{
+    fetchExamples()
+  },[])
+  let detail
   const handleButtonClick = () => {
     setShowJsonField(!showJsonField);
   };
@@ -18,7 +30,7 @@ const FormFlowStep = async ({ data, setIsOpen }: FormFacProps) => {
     data.query.updateParams?.type === "edit" &&
     data.query.updateParams?.data?.length
   ) {
-    const detail =
+     detail =
       data.query.updateParams?.data[data.query.updateParams?.index];
 
     defaultValue = {
@@ -29,6 +41,26 @@ const FormFlowStep = async ({ data, setIsOpen }: FormFacProps) => {
       mermaid: detail?.details[0]?.mermaid || "",
       example: JSON.stringify(detail?.example),
     };
+  }
+  // fetch examples
+  async function fetchExamples(){
+    const path = data?.path?.replace("flows","examples")
+    const examples = await getData(path)
+    console.log(examples)
+
+    const exampleArray = examples[detail?.api].map((element)=> {
+      return {
+        name:element.summary,
+          json: element.exampleJson,
+          ref : element['$ref']
+      }
+      // return element.summary
+      
+    }
+
+  )
+    setexampleArray(exampleArray)
+
   }
 
   const selectData = data.query.updateParams?.data[data.query.updateParams?.index].example.value.$ref;
@@ -125,8 +157,12 @@ const FormFlowStep = async ({ data, setIsOpen }: FormFacProps) => {
             register={"Select"}
             name={"Example Drop-down"}
             label={"Example Dropdown"}
+<<<<<<< HEAD
             options={res}
             api={`api`}
+=======
+            options={exampleArray}
+>>>>>>> 539aa269a2ec89542a27abfd18570a25157c9a0f
             errors={"Error"}
           />
         </GenericForm>
