@@ -91,14 +91,14 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     let updatedPayload = [];
     const payload: any = {
       ...formData,
-      details: {
+      details: [{
         description: formData.description,
         mermaid: formData.mermaid,
-      },
+      }],
     };
 
-    delete payload?.description;
-    delete payload?.mermaid;
+    // delete payload?.description;
+    // delete payload?.mermaid;
 
     if (
       data.query.updateParams &&
