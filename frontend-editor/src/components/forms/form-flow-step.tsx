@@ -1,32 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
-import { patchData,getData } from "../../utils/requestUtils";
+import { patchData, getData } from "../../utils/requestUtils";
 import { FormInput, FormTextInput } from "./form-input";
 import { toast } from "react-toastify";
 
 import FormSelect from "./form-select";
 import FlowPreview from "./flow-preview";
 const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
-  let defaultValue = {};
+  let defaultValue: any = {};
   const [showJsonField, setShowJsonField] = useState(false);
-  const [exampleArray, setexampleArray] = useState([false]);
+  const [exampleArray, setexampleArray] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [jsonData, setJsonData] = useState("");
 
+  useEffect(() => {
+    fetchExamples();
+  }, []);
 
-  useEffect(()=>{
-    fetchExamples()
-  },[])
-  let detail
-  const handleButtonClick = () => {
-    setShowJsonField(!showJsonField);
+  let detail;
+
+  const handlePreviewButtonClick = () => {
+    console.log(selectedValue);
+    if (exampleArray.length > 0) {
+      if (selectedValue === "") {
+        setJsonData(exampleArray[0].json);
+      } else {
+        const [singleExample] = exampleArray.filter(
+          (element) => element.name === selectedValue
+        );
+        setJsonData(singleExample.json);
+      }
+      setShowJsonField(!showJsonField);
+    }
   };
+
   if (
     data.query.updateParams &&
     data.query.updateParams?.type === "edit" &&
     data.query.updateParams?.data?.length
   ) {
-     detail =
-      data.query.updateParams?.data[data.query.updateParams?.index];
+    detail = data.query.updateParams?.data[data.query.updateParams?.index];
 
     defaultValue = {
       summary: detail?.summary || "",
@@ -38,36 +52,15 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     };
   }
   // fetch examples
-  async function fetchExamples(){
-    const path = data?.path?.replace("flows","examples")
-    const examples = await getData(path)
-    console.log(examples)
+  async function fetchExamples() {
+    const path = data?.path?.replace("flows", "examples");
+    const examples = await getData(path);
 
-    const exampleArray = examples[detail?.api].map((element)=> {
-      return {
-        name:element.summary,
-          json: element.exampleJson,
-          ref : element['$ref']
-      }
-      // return element.summary
-      
-    }
-
-  )
-    setexampleArray(exampleArray)
-
+    const exampleArray = examples[detail?.api].map((element) => {
+      return { name: element.summary, json: element.exampleJson };
+    });
+    setexampleArray(exampleArray);
   }
-
-  const selectData = data.query.updateParams?.data[data.query.updateParams?.index].example.value.$ref;
-  
-  let selectOptions = selectData.replace("../../", "/");
-  const newPath = data.path.split('/');
-  const newPathOptions = newPath[0] + selectOptions;
-  let path = newPathOptions.split('/');
-  path.pop();
-  path.pop();
-  const str = path.join("/")
-  const res = await getData(str)
 
   const onSubmit = async (formData: Record<string, string>) => {
     if (!formData?.summary) {
@@ -149,18 +142,18 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
           <FormTextInput name={`mermaid`} label={`Mermaid`} strip={false} />
           <FormInput name={`example`} label={`Example`} strip={false} />
           <FormSelect
-            register={"Select"}
-            name={"Example Drop-down"}
+            name={"dropDown"}
             label={"Example Dropdown"}
-            options={exampleArray}
+            options={exampleArray.map((element) => element.name)}
             errors={"Error"}
+            setSelectedValue={setSelectedValue}
           />
         </GenericForm>
       )}
       <div className=" relative">
         {!showJsonField && (
           <button
-            onClick={handleButtonClick}
+            onClick={handlePreviewButtonClick}
             className=" absolute right-3 bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
           >
             Preview
@@ -170,7 +163,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       {showJsonField && (
         <>
           <div className=" font-medium">Preview</div>
-          <FlowPreview />
+          <FlowPreview DefaultCode={JSON.stringify(jsonData, null, 2)} />
         </>
       )}
     </div>
