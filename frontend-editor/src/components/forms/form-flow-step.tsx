@@ -152,12 +152,7 @@ const FormFlowStep = async ({ data, setIsOpen }: FormFacProps) => {
             register={"Select"}
             name={"Example Drop-down"}
             label={"Example Dropdown"}
-<<<<<<< HEAD
-            options={res}
-            api={`api`}
-=======
             options={exampleArray}
->>>>>>> 539aa269a2ec89542a27abfd18570a25157c9a0f
             errors={"Error"}
           />
         </GenericForm>
