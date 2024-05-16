@@ -65,7 +65,7 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
 
   React.useEffect(() => {
     getflowFolder();
-  }, []);
+  }, [selectedFolder]);
 
   const FolderEditable: Editable = {
     name: selectedFolder ?? "",
