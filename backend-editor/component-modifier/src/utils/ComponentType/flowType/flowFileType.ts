@@ -49,8 +49,9 @@ export class FlowFileType extends FileTypeEditable {
         if (typeof val === "string") {
           delete data[key];
         } else if (Array.isArray(val)) {
-          data[key] = data[key].filter((d) => {
-            return !val.some((del) => del.path === d.path);
+          data[key] = data[key].filter((d, index) => {
+            // return !val.some((del) => del.path === d.path);
+            return index !== +val[0];
           });
         }
       }

@@ -154,7 +154,7 @@ export function DetailsContent({
     },
   };
   if (apiEditable.query.deleteParams) {
-    apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
+    apiEditable.query.deleteParams[apiName] = [index];
   }
   apiToolTip.data.current = apiEditable;
   React.useEffect(() => {
@@ -229,7 +229,7 @@ export function StepsContent({
     },
   };
   if (apiEditable.query.deleteParams) {
-    apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
+    apiEditable.query.deleteParams[apiName] = [index];
   }
   apiToolTip.data.current = apiEditable;
 
