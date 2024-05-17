@@ -13,9 +13,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   const [exampleArray, setexampleArray] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [jsonData, setJsonData] = useState("");
-  const [exampleDefultValue, setExampleDefaultValue] = useState(
-    "../../examples/health-insurance/cancel/cancel_cancel.yaml"
-  );
+  const [exampleDefultValue, setExampleDefaultValue] = useState("");
 
   useEffect(() => {
     fetchExamples();
@@ -52,8 +50,6 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       mermaid: detail?.details[0]?.mermaid || "",
       example: JSON.stringify(detail?.example),
     };
-    let example = JSON.parse(detail.example);
-    // console.log(example.value.$ref);
   }
 
   // fetch examples
@@ -67,21 +63,15 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     //   // return { name: element.summary, json: element.exampleJson };
     //   return { name: element };
     // });
-    // const exampleArray = examples[detail?.api].map((element) => {
-    //   // return { name: element.summary, json: element.exampleJson };
-    //   return { name: element };
-    // });
 
-    let example = JSON.parse(
-      data.query.updateParams?.data[data.query.updateParams?.index]?.example
-    );
-    // console.log(examples);
-    // console.log(example.value.$ref);
+    let exampleField =
+      data.query.updateParams?.data[data.query.updateParams?.index].example;
+
+    //Find example defalt value from example api and set it
 
     setExampleDefaultValue(
-      examples.find((element) => element === example.value.$ref)
+      examples.find((element) => element === exampleField.value.$ref)
     );
-
     setexampleArray(examples);
   }
 
@@ -114,6 +104,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     let updatedPayload = [];
     const payload: any = {
       ...formData,
+      example: { value: { $ref: formData.dropDown } },
       details: [
         {
           description: formData.description,
@@ -121,9 +112,9 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
         },
       ],
     };
-
     // delete payload?.description;
     // delete payload?.mermaid;
+    delete payload?.dropDown;
 
     if (
       data.query.updateParams &&
@@ -165,12 +156,11 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
           <FormInput name={`api`} label={`Api`} strip={false} />
           <FormInput name={`description`} label={`Description`} strip={false} />
           <FormTextInput name={`mermaid`} label={`Mermaid`} strip={false} />
-          <FormInput name={`example`} label={`Example`} strip={false} />
+          {/* <FormInput name={`example`} label={`Example`} strip={false} /> */}
           <FormSelect
             name={"dropDown"}
             label={"Example Dropdown"}
             // options={exampleArray.map((element) => element.name)}
-
             options={exampleArray}
             errors={"Error"}
             setSelectedValue={setSelectedValue}

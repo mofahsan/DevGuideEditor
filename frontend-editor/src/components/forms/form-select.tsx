@@ -13,7 +13,6 @@ const FormSelect = ({
     console.log(e.target.value, "index");
     setSelectedValue(e.target.value);
   };
-  console.log(defaultValue);
   return (
     <>
       <div className="mb-4">
@@ -24,11 +23,20 @@ const FormSelect = ({
           onChange={onSelectChange}
           defaultValue={defaultValue}
         >
-          {options.map((option: string, index: number) => (
-            <option value={option} key={index}>
-              {option}
-            </option>
-          ))}
+          {options.map((option: string, index: number) => {
+            // if default prop is passed it will set defulat value in select
+            if (defaultValue === option)
+              return (
+                <option selected value={option} key={index}>
+                  {option}
+                </option>
+              );
+            return (
+              <option value={option} key={index}>
+                {option}
+              </option>
+            );
+          })}
         </select>
         {errors[name] && <p className="text-red-500">{errors[name].message}</p>}
       </div>
