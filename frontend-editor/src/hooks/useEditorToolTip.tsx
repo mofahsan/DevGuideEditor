@@ -27,9 +27,9 @@ interface TooltipProps {
 }
 
 export default function useEditorToolTip(buttonStates = [true, true, true]) {
-  if (!EditMode) {
-    buttonStates = [false, false, false];
-  }
+  // if (!EditMode) {
+  //   buttonStates = [false, false, false];
+  // }
   const [visible, setVisible] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
