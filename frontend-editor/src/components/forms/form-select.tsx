@@ -7,12 +7,13 @@ const FormSelect = ({
   options,
   errors,
   setSelectedValue,
+  defaultValue,
 }: any) => {
   const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value, "index");
     setSelectedValue(e.target.value);
   };
-
+  console.log(defaultValue);
   return (
     <>
       <div className="mb-4">
@@ -21,6 +22,7 @@ const FormSelect = ({
           {...register(name)}
           className="mt-2 block w-full p-2 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
           onChange={onSelectChange}
+          defaultValue={defaultValue}
         >
           {options.map((option: string, index: number) => (
             <option value={option} key={index}>
