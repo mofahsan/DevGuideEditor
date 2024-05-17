@@ -57,7 +57,7 @@ export class FlowFileType extends FileTypeEditable {
       }
     }
     // const yml = flowToNested(data);
-    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
+    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(data));
   }
 
   async update(
