@@ -64,7 +64,7 @@ export default function DeleteModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Draggable handle=".modal-header">
+                {/* <Draggable handle=".modal-header"> */}
                   <Dialog.Panel className="w-full max-w-screen-sm transform overflow-hidden bg-white p-6 text-left align-middle shadow-xl transition-all">
                     <Dialog.Title
                       as="h2"
@@ -90,7 +90,7 @@ export default function DeleteModal({
                       </button>
                     </div>
                   </Dialog.Panel>
-                </Draggable>
+                {/* </Draggable> */}
               </Transition.Child>
             </div>
           </div>
