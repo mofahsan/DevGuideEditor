@@ -41,7 +41,6 @@ export function SummaryForm({
       defaultValues={detailValues}
     >
       <FormInput name={data.name} label={data.name} />
-      <FormSelect />
     </GenericForm>
   );
 }
