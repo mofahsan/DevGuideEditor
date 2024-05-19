@@ -381,8 +381,8 @@ function FlowDisclose({
   flowEditable: Editable;
 }) {
 
-  const apiToolTip = useEditorToolTip([true, true, false]);
-  let apiToolTip2 = useEditorToolTip([true, false, false]);
+  const apiToolTip = useEditorToolTip([true, false, false]);
+  let apiToolTip2 = useEditorToolTip([true, true, false]);
 
 
   const apiEditable = { ...flowEditable };
