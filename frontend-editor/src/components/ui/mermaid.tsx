@@ -28,7 +28,7 @@ export const MermaidDiagram: React.FC<MermaidProps> = ({ chartDefinition, keys }
       ref.current.appendChild
         var mermaidPane = document.createElement("description-mermaid");
         mermaidPane.innerHTML = res.svg
-        ref.current.appendChild(mermaidPane)
+        ref?.current?.appendChild(mermaidPane)
       })
     }
   }, [chartDefinition, keys]);

@@ -12,7 +12,8 @@ import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { GoRelFilePath } from "react-icons/go";
 import { DropTransition } from "./helper-components";
 import HorizontalTabBar from "./horizontal-tab";
-import { MermaidDiagram } from "../components/ui/mermaid";
+import { MermaidDiagram } from "../components/ui/mermaid"
+
 
 //ignore
 interface Flow {
@@ -249,7 +250,7 @@ export function StepsContent({
                   <span className="flex items-end">: {element.summary}</span>
                   
                 </div>
-                {open ? (
+                {open  ? (
                   <IoIosArrowDropdown size={25} />
                 ) : (
                   <IoIosArrowDropright size={25} />
