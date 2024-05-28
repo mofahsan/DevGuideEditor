@@ -1,19 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
-import {FormInput, FormTextInput} from "./form-input";
+import { FormInput, FormTextInput } from "./form-input";
 import { patchData } from "../../utils/requestUtils";
 import { toast } from "react-toastify";
-
+import { MermaidDiagram } from "../ui/mermaid";
 
 const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
-  let defaultValue = {};
+  let defaultValue: any = {};
+  const [detailMermaidPreview, setDetailMermaidPreview] = useState(false);
   if (
     data.query.updateParams &&
     data.query.updateParams?.type === "edit" &&
     data.query.updateParams?.data?.length
-  ){
-    const detail = data.query.updateParams?.data[data.query.updateParams?.index];
+  ) {
+    const detail =
+      data.query.updateParams?.data[data.query.updateParams?.index];
 
     defaultValue = {
       description: detail?.description,
@@ -24,13 +26,13 @@ const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
   const onSubmit = async (formData: Record<string, string>) => {
     let updatedPayload = [];
 
-    if(!formData?.description){
-      toast.error('description needed')
+    if (!formData?.description) {
+      toast.error("description needed");
       return;
     }
 
-    if(!formData?.mermaid){
-      toast.error('mermaid needed')
+    if (!formData?.mermaid) {
+      toast.error("mermaid needed");
       return;
     }
 
@@ -61,6 +63,10 @@ const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
     }
   };
 
+  function handledetailMermaidPreviewButtonClick() {
+    setDetailMermaidPreview(!detailMermaidPreview);
+  }
+
   return (
     <div>
       <GenericForm
@@ -70,6 +76,18 @@ const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
       >
         <FormInput name={`description`} label={`Description`} strip={false} />
         <FormTextInput name={`mermaid`} label={`Mermaid`} strip={false} />
+        <button
+          type="button"
+          onClick={handledetailMermaidPreviewButtonClick}
+          className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+        >
+          {detailMermaidPreview ? "Close Mermaid Preview" : "Mermaid Preview"}
+        </button>
+        {detailMermaidPreview ? (
+          <MermaidDiagram chartDefinition={defaultValue?.mermaid} keys={""} />
+        ) : (
+          <></>
+        )}
       </GenericForm>
     </div>
   );
