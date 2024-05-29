@@ -48,8 +48,6 @@ const FormInput = ({
   );
 };
 
-
-
 const FormTextInput = ({
   register,
   name,
@@ -58,9 +56,10 @@ const FormTextInput = ({
   errors,
   type = "text",
   rols = 10,
-  cols= 100,
+  cols = 100,
   strip = false,
   disable = false,
+  onChange,
 }: any) => {
   const handleChange = (e: any) => {
     let value = e.target.value;
@@ -69,6 +68,7 @@ const FormTextInput = ({
       value = value.replace(/\s+/g, "");
     }
     e.target.value = value; // Set the input field's value
+    onChange && onChange(e);
   };
   const handleFocus = (e: any) => {
     e.stopPropagation();
@@ -102,4 +102,4 @@ const FormTextInput = ({
   );
 };
 
-export  {FormInput , FormTextInput};
+export { FormInput, FormTextInput };

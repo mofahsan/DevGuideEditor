@@ -12,8 +12,7 @@ import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { GoRelFilePath } from "react-icons/go";
 import { DropTransition } from "./helper-components";
 import HorizontalTabBar from "./horizontal-tab";
-import { MermaidDiagram } from "../components/ui/mermaid"
-
+import { MermaidDiagram } from "../components/ui/mermaid";
 
 //ignore
 interface Flow {
@@ -47,7 +46,6 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
     "flow",
     "steps",
   ]);
-
   // console.log(selectedFolder)
   const reRender = useRef(false);
   async function getflowFolder() {
@@ -56,6 +54,9 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
       const data = await getData(flowFolder.path);
       // console.log("myworld")
       setFolderData(data);
+      if (data.length > 0 && !selectedFolder) {
+        setSelectedFolder(data[0]);
+      }
       reRender.current = !reRender.current;
       // console.log(data);
     } catch (err) {
@@ -98,9 +99,8 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
   };
 
   if (FolderEditable.query.addParams) {
-    FolderEditable.query.addParams = {type:'add'};
+    FolderEditable.query.addParams = { type: "add" };
   }
-
 
   return (
     <>
@@ -244,94 +244,96 @@ export function StepsContent({
     <>
       {apiName == "steps" && (
         <Disclosure>
-             {({ open }) => (
-<>
-          <Disclosure.Button
-            onContextMenu={apiToolTip.onContextMenu}
-            className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
-          >
-            <Tippy {...apiToolTip.tippyProps}>
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <CgMenuMotion size={20} className="mr-2" />
-                  <span className="font-extrabold">{element.api}</span>
-                  <span className="flex items-end">: {element.summary}</span>
-                  
-                </div>
-                
-                {open  ? (
-                  <IoIosArrowDropdown size={25} />
-                  
-                ) : (
-                  <IoIosArrowDropright size={25} />
-                )}
-              </div>
-            </Tippy>
-          </Disclosure.Button>
-          <DropTransition>
-            <Disclosure.Panel>
-              <div className="ml-6 p-2 shadow-inner">
-                <table className="w-full border-collapse table-auto">
-                  <tbody>
-                    {Object.keys(element).map(function (key, index) {
-                      return key != "details" ? (
-                        <tr>
-                          <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                            {key}
-                          </td>
-                          <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                            {JSON.stringify(element[key])}
-                          </td>
-                        </tr>
-                      ) : key == "details" ? (
-                        <>
-                          <tr>
-                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                              {key}
-                            </td>
-                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                              {element[key][0] &&
-                                JSON.stringify(element[key][0]["description"])}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                              {"diagram"}
-                            </td>
-                            <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                              {element[key][0] && (
-                                <MermaidDiagram
-                                  chartDefinition={element[key][0]["mermaid"]}
-                                  keys={index.toString()}
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        </>
-                      ) : (
-                        <></>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                <p>
-                  <MermaidDiagram
-                    keys={index}
-                    chartDefinition={element.mermaid}
-                  />
-                </p>
-              </div>
-            </Disclosure.Panel>
-          </DropTransition>
-          </>
-             )}
-       </Disclosure>
+          {({ open }) => (
+            <>
+              <Disclosure.Button
+                onContextMenu={apiToolTip.onContextMenu}
+                className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+              >
+                <Tippy {...apiToolTip.tippyProps}>
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center">
+                      <CgMenuMotion size={20} className="mr-2" />
+                      <span className="font-extrabold">{element.api}</span>
+                      <span className="flex items-end">
+                        : {element.summary}
+                      </span>
+                    </div>
+
+                    {open ? (
+                      <IoIosArrowDropdown size={25} />
+                    ) : (
+                      <IoIosArrowDropright size={25} />
+                    )}
+                  </div>
+                </Tippy>
+              </Disclosure.Button>
+              <DropTransition>
+                <Disclosure.Panel>
+                  <div className="ml-6 p-2 shadow-inner">
+                    <table className="w-full border-collapse table-auto">
+                      <tbody>
+                        {Object.keys(element).map(function (key, index) {
+                          return key != "details" ? (
+                            <tr>
+                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                {key}
+                              </td>
+                              <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                {JSON.stringify(element[key])}
+                              </td>
+                            </tr>
+                          ) : key == "details" ? (
+                            <>
+                              <tr>
+                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                  {key}
+                                </td>
+                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                  {element[key][0] &&
+                                    JSON.stringify(
+                                      element[key][0]["description"]
+                                    )}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                  {"diagram"}
+                                </td>
+                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                  {element[key][0] && (
+                                    <MermaidDiagram
+                                      chartDefinition={
+                                        element[key][0]["mermaid"]
+                                      }
+                                      keys={index.toString()}
+                                    />
+                                  )}
+                                </td>
+                              </tr>
+                            </>
+                          ) : (
+                            <></>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                    <p>
+                      <MermaidDiagram
+                        keys={index}
+                        chartDefinition={element.mermaid}
+                      />
+                    </p>
+                  </div>
+                </Disclosure.Panel>
+              </DropTransition>
+            </>
+          )}
+        </Disclosure>
       )}
     </>
   );
 }
-
-
 
 // showing summary/details/reference/steps etc
 export function FlowContent({
@@ -345,14 +347,14 @@ export function FlowContent({
 
   async function getFlow() {
     let data = await getData(flows.path);
-    const dataArray = ['summary','details','references','steps']
-    let cleanedData : any = {}
-    if(data!== undefined){
-      dataArray.forEach((api)=>{
-        cleanedData[api]= data[api] || []
-    })
-    data = cleanedData
-  }
+    const dataArray = ["summary", "details", "references", "steps"];
+    let cleanedData: any = {};
+    if (data !== undefined) {
+      dataArray.forEach((api) => {
+        cleanedData[api] = data[api] || [];
+      });
+      data = cleanedData;
+    }
     setFlowData(data);
     reRender = !reRender;
   }
@@ -393,15 +395,13 @@ function FlowDisclose({
   //  FlowData[];
   flowEditable: Editable;
 }) {
-
   const apiToolTip = useEditorToolTip([true, false, false]);
   let apiToolTip2 = useEditorToolTip([true, true, false]);
-
 
   const apiEditable = { ...flowEditable };
   apiEditable.name = apiName;
   console.log(apiName, "ahsan-->");
-  apiEditable.registerID = FlowFileID
+  apiEditable.registerID = FlowFileID;
   apiEditable.query = {
     getData: flowEditable.query.getData,
     Parent: flowEditable,
@@ -409,7 +409,7 @@ function FlowDisclose({
     deleteParams: {},
     updateParams: {
       data,
-      ...((apiName === "details" || apiName === "steps") && { type: "new" })
+      ...((apiName === "details" || apiName === "steps") && { type: "new" }),
     },
     copyData: async () => {
       const copyData: Record<string, FlowData[]> = {};
@@ -421,7 +421,7 @@ function FlowDisclose({
     apiEditable.query.deleteParams[apiName] = JSON.stringify([]);
   }
 
-  apiToolTip2.data.current= apiEditable
+  apiToolTip2.data.current = apiEditable;
   apiToolTip.data.current = apiEditable;
 
   console.log(data, "data looggg");
@@ -429,48 +429,48 @@ function FlowDisclose({
     <Disclosure>
       {({ open }) => (
         <>
-        { (apiName === "summary" || apiName === "references") &&
-          <Disclosure.Button
-            className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
+          {(apiName === "summary" || apiName === "references") && (
+            <Disclosure.Button
+              className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
           transition duration-300 ease-in-out"
-            onContextMenu={apiToolTip.onContextMenu}
-          >
-            <Tippy {...apiToolTip.tippyProps}>
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <CgMenuMotion size={20} className="mr-2" />
-                  <span>{apiName}</span>
+              onContextMenu={apiToolTip.onContextMenu}
+            >
+              <Tippy {...apiToolTip.tippyProps}>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center">
+                    <CgMenuMotion size={20} className="mr-2" />
+                    <span>{apiName}</span>
+                  </div>
+                  {open ? (
+                    <IoIosArrowDropdown size={25} />
+                  ) : (
+                    <IoIosArrowDropright size={25} />
+                  )}
                 </div>
-                {open ? (
-                  <IoIosArrowDropdown size={25} />
-                ) : (
-                  <IoIosArrowDropright size={25} />
-                )}
-              </div>
-            </Tippy>
-          </Disclosure.Button>
-}
-{ (apiName === "details" || apiName === "steps") &&
-          <Disclosure.Button
-            className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
+              </Tippy>
+            </Disclosure.Button>
+          )}
+          {(apiName === "details" || apiName === "steps") && (
+            <Disclosure.Button
+              className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
           transition duration-300 ease-in-out"
-            onContextMenu={apiToolTip2.onContextMenu}
-          >
-            <Tippy {...apiToolTip2.tippyProps}>
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <CgMenuMotion size={20} className="mr-2" />
-                  <span>{apiName}</span>
+              onContextMenu={apiToolTip2.onContextMenu}
+            >
+              <Tippy {...apiToolTip2.tippyProps}>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center">
+                    <CgMenuMotion size={20} className="mr-2" />
+                    <span>{apiName}</span>
+                  </div>
+                  {open ? (
+                    <IoIosArrowDropdown size={25} />
+                  ) : (
+                    <IoIosArrowDropright size={25} />
+                  )}
                 </div>
-                {open ? (
-                  <IoIosArrowDropdown size={25} />
-                ) : (
-                  <IoIosArrowDropright size={25} />
-                )}
-              </div>
-            </Tippy>
-          </Disclosure.Button>
-}
+              </Tippy>
+            </Disclosure.Button>
+          )}
           <DropTransition>
             <Disclosure.Panel>
               {apiName == "summary" && (

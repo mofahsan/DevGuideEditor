@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { FormFacProps } from "./form-factory";
 import GenericForm from "./generic-form";
 import { patchData, getData } from "../../utils/requestUtils";
 import { FormInput, FormTextInput } from "./form-input";
 import { toast } from "react-toastify";
-
 import FormSelect from "./form-select";
 import FlowPreview from "./flow-preview";
 import { MermaidDiagram } from "../ui/mermaid";
+import { Transition } from "@headlessui/react";
 const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue: any = {};
   const [showJsonField, setShowJsonField] = useState(false);
@@ -16,11 +16,17 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
   const [jsonData, setJsonData] = useState("");
   const [exampleDefultValue, setExampleDefaultValue] = useState("");
   const [mermaidPreview, setMermaidPreview] = useState(false);
+  const [mermaidInputValue, setMermaidInputValue] = useState("");
   useEffect(() => {
     fetchExamples();
   }, []);
 
   let detail;
+
+  const handleMermaidInputChange = (e: any) => {
+    setMermaidInputValue(e.target.value);
+  };
+
   const handlePreviewButtonClick = () => {
     if (!selectedValue) {
       setJsonData(exampleArray[0].value);
@@ -28,7 +34,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       const singleExample = exampleArray.find(
         (element: any) => element.$ref === selectedValue
       );
-      setJsonData(singleExample?.value);
+      setJsonData(singleExample.value);
     }
     setShowJsonField(!showJsonField);
   };
@@ -45,8 +51,9 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       reference: detail?.reference || "",
       api: detail?.api || "",
       description: detail?.details[0]?.description || "",
-      mermaid: detail?.details[0]?.mermaid || "",
+      mermaid: mermaidInputValue || detail?.details[0]?.mermaid || "",
       example: JSON.stringify(detail?.example),
+      dropDown: selectedValue,
     };
   }
 
@@ -56,10 +63,6 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     path.pop();
     let newPath = path.join("/");
     const examples = await getData(newPath, { type: "reference" });
-    // const exampleArray = examples[detail?.api].map((element) => {
-    //   // return { name: element.summary, json: element.exampleJson };
-    //   return { name: element };
-    // });
     let exampleField =
       data.query.updateParams?.data[data.query.updateParams?.index].example;
     setexampleArray(examples.refs);
@@ -139,63 +142,83 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       setIsOpen(false);
     }
   };
-  function handleMermaidPreviewButtonClick() {
+  const handleMermaidPreviewButtonClick = () => {
     setMermaidPreview(!mermaidPreview);
-  }
+  };
   return (
     <div>
-      {!showJsonField && (
-        <GenericForm
-          onSubmit={onSubmit}
-          className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
-          defaultValues={defaultValue}
+      {!mermaidPreview && !showJsonField && (
+        <Transition.Child
+          enter="ease-out duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          <FormInput name={`summary`} label={`Summary`} strip={false} />
-          <FormInput name={`reference`} label={`Reference`} strip={false} />
-          <FormInput name={`api`} label={`Api`} strip={false} />
-          <FormInput name={`description`} label={`Description`} strip={false} />
-          <FormTextInput name={`mermaid`} label={`Mermaid`} strip={false} />
-          <button
-            type="button"
-            onClick={handleMermaidPreviewButtonClick}
-            className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+          <GenericForm
+            onSubmit={onSubmit}
+            className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
+            defaultValues={defaultValue}
           >
-            {mermaidPreview ? "Close Mermaid Preview" : "Mermaid Preview"}
-          </button>
-
-          {
-            //show memaid preview
-            mermaidPreview ? (
-              <MermaidDiagram
-                chartDefinition={defaultValue.mermaid}
-                keys={""}
-              />
-            ) : (
-              <></>
-            )
-          }
-          {/* <FormInput name={`example`} label={`Example`} strip={false} /> */}
-          <FormSelect
-            name={"dropDown"}
-            label={"Example Dropdown"}
-            options={exampleArray.map((element: any) => element.$ref)}
-            errors={"Error"}
-            setSelectedValue={setSelectedValue}
-            defaultValue={exampleDefultValue}
-          />
-          <button
-            type="button"
-            onClick={handlePreviewButtonClick}
-            className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
-          >
-            Example Preview
-          </button>
-        </GenericForm>
+            <FormInput name={`summary`} label={`Summary`} strip={false} />
+            <FormInput name={`reference`} label={`Reference`} strip={false} />
+            <FormInput name={`api`} label={`Api`} strip={false} />
+            <FormInput
+              name={`description`}
+              label={`Description`}
+              strip={false}
+            />
+            <FormTextInput
+              onChange={handleMermaidInputChange}
+              name={`mermaid`}
+              label={`Mermaid`}
+              strip={false}
+            />
+            <button
+              type="button"
+              onClick={handleMermaidPreviewButtonClick}
+              className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Mermaid Preview
+            </button>
+            {/* <FormInput name={`example`} label={`Example`} strip={false} /> */}
+            <FormSelect
+              name={"dropDown"}
+              label={"Example Dropdown"}
+              options={exampleArray.map((element: any) => element.$ref)}
+              errors={"Error"}
+              setSelectedValue={setSelectedValue}
+              defaultValue={exampleDefultValue}
+            />
+            <button
+              type="button"
+              onClick={handlePreviewButtonClick}
+              className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Example Preview
+            </button>
+          </GenericForm>
+        </Transition.Child>
       )}
       {showJsonField && (
-        <>
-          <div className=" font-medium">Preview</div>
-
+        <Transition.Child
+          enter="ease-out duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setShowJsonField(!showJsonField);
+            }}
+            className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+          >
+            Back
+          </button>
           <FlowPreview
             DefaultCode={
               typeof jsonData === "string"
@@ -203,7 +226,27 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
                 : JSON.stringify(jsonData, null, 2)
             }
           />
-        </>
+        </Transition.Child>
+      )}
+
+      {mermaidPreview && (
+        <Transition.Child
+          enter="ease-out duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <button
+            type="button"
+            onClick={handleMermaidPreviewButtonClick}
+            className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+          >
+            Back
+          </button>
+          <MermaidDiagram chartDefinition={defaultValue.mermaid} keys={""} />
+        </Transition.Child>
       )}
     </div>
   );
