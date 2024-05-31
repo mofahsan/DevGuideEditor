@@ -195,7 +195,13 @@ export function DetailsContent({
   );
 }
 
-export function GenericContent({ data, reRender, apiName, editable }: any) {
+export function GenericContent({
+  data,
+  reRender,
+  apiName,
+  editable,
+  hover = true,
+}: any) {
   const apiToolTip = useEditorToolTip();
 
   React.useEffect(() => {
@@ -203,7 +209,9 @@ export function GenericContent({ data, reRender, apiName, editable }: any) {
   }, [reRender]);
 
   return (
-    <div className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg">
+    <div
+      className={`flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 ${hover && "hover:bg-blue-200"} focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg`}
+    >
       <p> {data}</p>
     </div>
   );
@@ -396,7 +404,7 @@ function FlowDisclose({
   flowEditable: Editable;
 }) {
   const apiToolTip = useEditorToolTip([true, false, false]);
-  let apiToolTip2 = useEditorToolTip([true, true, false]);
+  let apiToolTip2 = useEditorToolTip([false, true, false]);
 
   const apiEditable = { ...flowEditable };
   apiEditable.name = apiName;
@@ -424,7 +432,6 @@ function FlowDisclose({
   apiToolTip2.data.current = apiEditable;
   apiToolTip.data.current = apiEditable;
 
-  console.log(data, "data looggg");
   return (
     <Disclosure>
       {({ open }) => (
@@ -474,7 +481,11 @@ function FlowDisclose({
           <DropTransition>
             <Disclosure.Panel>
               {apiName == "summary" && (
-                <GenericContent data={data} editable={flowEditable} />
+                <GenericContent
+                  data={data}
+                  editable={flowEditable}
+                  hover={false}
+                />
               )}
               {open &&
                 apiName == "details" &&
@@ -489,7 +500,9 @@ function FlowDisclose({
                     editable={flowEditable}
                   />
                 ))}
-              {apiName == "references" && <GenericContent data={data} />}
+              {apiName == "references" && (
+                <GenericContent data={data} hover={false} />
+              )}
               {apiName == "steps" &&
                 // <StepsContent apiName={apiName} detailData={data} editable={flowEditable} />
                 data.map((element: any, index: number) => (

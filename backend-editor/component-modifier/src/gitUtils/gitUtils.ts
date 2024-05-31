@@ -119,12 +119,11 @@ export const cloneRepo = async (
   // Construct the authenticated URL
   const authenticatedUrl = `https://${token}@github.com/${userName}/${repo}.git`;
 
-  const forkedCompPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO") : "../../../../backend-editor/FORKED_REPO"
+  const forkedCompPath = isBinary
+    ? path.join(path.dirname(process.execPath), "./FORKED_REPO")
+    : "../../../../backend-editor/FORKED_REPO";
 
-  const localPath = path.resolve(
-    __dirname,
-    forkedCompPath
-  );
+  const localPath = path.resolve(__dirname, forkedCompPath);
   try {
     // await deleteFolderSync(localPath);
     if (fs.existsSync(localPath)) {
@@ -170,7 +169,8 @@ export const changeBranch = async (
   let currentBranch = "remotes/" + currentBranchSummary.current;
   currentBranch = extractBranchName(currentBranch);
   console.log(`Current branch is ${currentBranch}`);
-  console.log(`Switching to branch ${branchName}`);
+  // console.log(git.stashList)
+
   if (currentBranch === branchName) {
     console.log(`Already on branch ${branchName}`);
     return;
@@ -197,8 +197,9 @@ export const changeBranch = async (
 
     // Check if there are stashes for the new branch and apply the most recent one
     const stashList = await git.stashList();
+    // console.log(stashList.all);
     const branchStashIndex = stashList.all.findIndex((stash) =>
-      stash.message.includes(`stash@${branchName}`)
+      stash.message.includes(`stash@${extractBranchName(branchName)}`)
     );
     if (branchStashIndex !== -1) {
       await git.stash(["pop", `stash@{${branchStashIndex}}`]);
@@ -404,26 +405,26 @@ export function extractBranchName(fullBranchName: string): string {
   return parts[parts.length - 1];
 }
 
-(async () => {
-  const token = "";
-  const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
-  const userName = "rudranshOndc";
-  const repoPath = path.resolve(
-    __dirname,
-    "../../../../backend-editor/FORKED_REPO"
-  );
-  // await getBranches(repoPath);
-  //   await forkRepository(token, url);
-  //   await cloneRepo(token, userName, url);
-  //   await changeBranch(
-  //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
-  //     "release-FIS12-2.0.0"
-  //   );
-  // console.log(await getStatus(repoPath));
-  // changeBranch(repoPath, "master");
-  // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
-  // console.log(await getBranches(repoPath));
-  // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
-  // await resetCurrentBranch(repoPath);
-})();
+// (async () => {
+//   const token = "";
+//   const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
+//   const userName = "rudranshOndc";
+//   const repoPath = path.resolve(
+//     __dirname,
+//     "../../../../backend-editor/FORKED_REPO"
+//   );
+//   // await getBranches(repoPath);
+//   //   await forkRepository(token, url);
+//   //   await cloneRepo(token, userName, url);
+//   //   await changeBranch(
+//   //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
+//   //     "release-FIS12-2.0.0"
+//   //   );
+//   // console.log(await getStatus(repoPath));
+//   // changeBranch(repoPath, "master");
+//   // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+//   // await new Promise((resolve) => setTimeout(resolve, 2000));
+//   // console.log(await getBranches(repoPath));
+//   // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
+//   // await resetCurrentBranch(repoPath);
+// })();

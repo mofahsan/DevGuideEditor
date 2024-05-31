@@ -1,4 +1,6 @@
+import Tippy from "@tippyjs/react";
 import React from "react";
+import { LabelToolTip, LabelWithToolTip } from "./form-input";
 
 const FormSelect = ({
   register,
@@ -8,6 +10,7 @@ const FormSelect = ({
   errors,
   setSelectedValue,
   defaultValue,
+  labelInfo = "",
 }: any) => {
   const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value, "index");
@@ -16,7 +19,8 @@ const FormSelect = ({
   return (
     <>
       <div className="mb-4">
-        <label className="block">{label}</label>
+        <LabelWithToolTip labelInfo={labelInfo} label={label} />
+
         <select
           {...register(name)}
           className="mt-2 block w-full p-2 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
