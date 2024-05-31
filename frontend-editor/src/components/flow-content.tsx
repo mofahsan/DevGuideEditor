@@ -54,7 +54,7 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
       const data = await getData(flowFolder.path);
       // console.log("myworld")
       setFolderData(data);
-      if (data.length > 0 && !selectedFolder) {
+      if (data.length > 0) {
         setSelectedFolder(data[0]);
       }
       reRender.current = !reRender.current;
@@ -318,12 +318,12 @@ export function StepsContent({
                         })}
                       </tbody>
                     </table>
-                    <p>
+                    {/* <p>
                       <MermaidDiagram
                         keys={index}
                         chartDefinition={element.mermaid}
                       />
-                    </p>
+                    </p> */}
                   </div>
                 </Disclosure.Panel>
               </DropTransition>

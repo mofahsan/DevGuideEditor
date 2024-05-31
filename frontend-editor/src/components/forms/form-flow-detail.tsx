@@ -5,6 +5,7 @@ import { FormInput, FormTextInput } from "./form-input";
 import { patchData } from "../../utils/requestUtils";
 import { toast } from "react-toastify";
 import { MermaidDiagram } from "../ui/mermaid";
+import { Transition } from "@headlessui/react";
 
 const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
   let defaultValue: any = {};
@@ -74,29 +75,49 @@ const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
   return (
     <div>
       {!detailMermaidPreview && (
-        <GenericForm
-          onSubmit={onSubmit}
-          className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
-          defaultValues={defaultValue}
+        <Transition.Child
+          enter="ease-out duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          <FormInput name={`description`} label={`Description`} strip={false} />
-          <FormTextInput
-            onChange={handleInputChange}
-            name={`mermaid`}
-            label={`Mermaid`}
-            strip={false}
-          />
-          <button
-            type="button"
-            onClick={handledetailMermaidPreviewButtonClick}
-            className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+          <GenericForm
+            onSubmit={onSubmit}
+            className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
+            defaultValues={defaultValue}
           >
-            Mermaid Preview
-          </button>
-        </GenericForm>
+            <FormInput
+              name={`description`}
+              label={`Description`}
+              strip={false}
+            />
+            <FormTextInput
+              onChange={handleInputChange}
+              name={`mermaid`}
+              label={`Mermaid`}
+              strip={false}
+            />
+            <button
+              type="button"
+              onClick={handledetailMermaidPreviewButtonClick}
+              className="bottom-8 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              Mermaid Preview
+            </button>
+          </GenericForm>
+        </Transition.Child>
       )}
       {detailMermaidPreview && (
-        <>
+        <Transition.Child
+          enter="ease-out duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
           <button
             type="button"
             onClick={handledetailMermaidPreviewButtonClick}
@@ -105,7 +126,7 @@ const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
             Back
           </button>
           <MermaidDiagram chartDefinition={defaultValue?.mermaid} keys={""} />
-        </>
+        </Transition.Child>
       )}
     </div>
   );
