@@ -54,6 +54,7 @@ export function LoginCard() {
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
+              {/* @ts-ignore */}
               <Label
                 htmlFor="email"
                 className=" text-lg md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow"
@@ -74,6 +75,7 @@ export function LoginCard() {
             </div>
             <div className="relative space-y-2">
               <div className="flex items-center">
+          {/* @ts-ignore */}
                 <Label
                   htmlFor="password"
                   className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow"
@@ -95,6 +97,7 @@ export function LoginCard() {
             </div>
             <div className="relative space-y-2">
               <div className="flex items-center">
+               {/* @ts-ignore */}
                 <Label
                   htmlFor="password"
                   className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow"

@@ -13,12 +13,13 @@ import {
 import path from "path";
 import axios from "axios";
 import { isBinary } from "../utils/fileUtils";
+import {rootPath} from "electron-root-path"
 
 export const app = express();
 app.use(express.json());
 const forkRepoPath = "../../../../backend-editor/FORKED_REPO"
-const forkedRepoPathBinary = "./FORKED_REPO"
-const forkedRepoComputedPath = isBinary? path.join(path.dirname(process.execPath), forkedRepoPathBinary) : forkRepoPath
+const forkedRepoPathBinary = "FORKED_REPO"
+const forkedRepoComputedPath = isBinary? path.join(rootPath,"../", forkedRepoPathBinary) : forkRepoPath
 
 
 app.post("/init", async (req, res) => {

@@ -44,8 +44,9 @@ var fs_1 = __importDefault(require("fs"));
 var fse = require("fs-extra");
 var fs_p = require("fs").promises;
 var path_1 = __importDefault(require("path"));
+var electron_root_path_1 = require("electron-root-path");
 var json_schema_ref_parser_1 = __importDefault(require("@apidevtools/json-schema-ref-parser"));
-exports.isBinary = process.argv[0] === process.execPath;
+exports.isBinary = electron_root_path_1.rootPath.split(".").pop() === "app";
 function loadYamlWithRefs(filePath) {
     return __awaiter(this, void 0, void 0, function () {
         var schema, error_1;

@@ -44,11 +44,12 @@ var fileUtils_1 = require("./fileUtils");
 var path_1 = __importDefault(require("path"));
 var promises_1 = __importDefault(require("fs/promises"));
 var fileUtils_2 = require("./fileUtils");
+var electron_root_path_1 = require("electron-root-path");
 var HistoryUtil = /** @class */ (function () {
     function HistoryUtil(maxHistory) {
         this.history = [];
         this.maxHistory = maxHistory;
-        var historyPath = fileUtils_2.isBinary ? path_1.default.join(path_1.default.dirname(process.execPath), "./history") : path_1.default.resolve(__dirname, "../../history");
+        var historyPath = fileUtils_2.isBinary ? path_1.default.join(electron_root_path_1.rootPath, "../", "history") : path_1.default.resolve(__dirname, "../../history");
         this.historyPath = historyPath;
         this.initializeHistoryFolder();
     }

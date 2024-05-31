@@ -1,12 +1,10 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const url = require('url');
-const { app } = require('electron');
 app.commandLine.appendSwitch('enable-express-mode', 'true');
 require("./app")
 
 
-console.log("hello world")
 // Keep a global reference of the window object to prevent it from being garbage collected
 let mainWindow;
 

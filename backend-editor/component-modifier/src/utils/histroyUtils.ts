@@ -3,6 +3,7 @@ import { copyDir, deleteFolderSync } from "./fileUtils";
 import path from "path";
 import fs from "fs/promises";
 import { isBinary } from "./fileUtils";
+import {rootPath} from "electron-root-path"
 
 export class HistoryUtil {
   history: string[];
@@ -12,7 +13,7 @@ export class HistoryUtil {
   constructor(maxHistory: number) {
     this.history = [];
     this.maxHistory = maxHistory;
-    const historyPath = isBinary? path.join(path.dirname(process.execPath), "./history") : path.resolve(__dirname, "../../history");
+    const historyPath = isBinary? path.join(rootPath,"../", "history") : path.resolve(__dirname, "../../history");
     this.historyPath = historyPath
 
     this.initializeHistoryFolder();

@@ -45,11 +45,12 @@ var gitUtils_1 = require("../gitUtils/gitUtils");
 var path_1 = __importDefault(require("path"));
 var axios_1 = __importDefault(require("axios"));
 var fileUtils_1 = require("../utils/fileUtils");
+var electron_root_path_1 = require("electron-root-path");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
 var forkRepoPath = "../../../../backend-editor/FORKED_REPO";
-var forkedRepoPathBinary = "./FORKED_REPO";
-var forkedRepoComputedPath = fileUtils_1.isBinary ? path_1.default.join(path_1.default.dirname(process.execPath), forkedRepoPathBinary) : forkRepoPath;
+var forkedRepoPathBinary = "FORKED_REPO";
+var forkedRepoComputedPath = fileUtils_1.isBinary ? path_1.default.join(electron_root_path_1.rootPath, "../", forkedRepoPathBinary) : forkRepoPath;
 exports.app.post("/init", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var link, _a, username, repoUrl, token, err_1;
     return __generator(this, function (_b) {

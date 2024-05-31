@@ -2,6 +2,7 @@ const fs = require("fs");
 import yaml from "js-yaml";
 const path = require("path");
 import { isBinary } from "../fileUtils";
+import {rootPath} from "electron-root-path"
 
 const $RefParser = require("json-schema-ref-parser");
 const { execSync } = require("child_process");
@@ -18,10 +19,10 @@ require("ajv-errors")(ajv);
 const args = process.argv.slice(2);
 // var example_set = args[0]
 // var flow_set = args[1]
-var base_yaml = isBinary? path.join(path.dirname(process.execPath),"./FORKED_REPO/api/components/beckn_yaml.yaml"): "./src/utils/build/beckn_yaml.yaml"; //beckn yaml
-var example_yaml = isBinary? path.join(path.dirname(process.execPath),"./FORKED_REPO/api/components/index.yaml"):"../FORKED_REPO/api/components/index.yaml"; //args[1]; //  main file of the yamls
-var outputPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/build/build.yaml") : "./src/build/build.yaml";
-var uiPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/ui/build.js") : "./src/build/build.js";
+var base_yaml = isBinary? path.join(rootPath,"../","FORKED_REPO/api/components/beckn_yaml.yaml"): "./src/utils/build/beckn_yaml.yaml"; //beckn yaml
+var example_yaml = isBinary? path.join(rootPath,"../","FORKED_REPO/api/components/index.yaml"):"../FORKED_REPO/api/components/index.yaml"; //args[1]; //  main file of the yamls
+var outputPath = isBinary? path.join(rootPath,"../", "FORKED_REPO/api/build/build.yaml") : "./src/build/build.yaml";
+var uiPath = isBinary? path.join(rootPath,"../", "FORKED_REPO/ui/build.js") : "./src/build/build.js";
 // const outputPath = `./build.yaml`;
 // const unresolvedFilePath = `https://raw.githubusercontent.com/beckn/protocol-specifications/master/api/transaction/components/index.yaml`
 const tempPath = `./temp.yaml`;
@@ -466,7 +467,7 @@ export async function buildWrapper(folderName) {
 
     compareFiles();
     if(folderName){
-      var example_yaml = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/${folderName}/index.yaml`):`../FORKED_REPO/api/${folderName}/index.yaml`; //args[1]; //  main file of the yamls
+      var example_yaml = isBinary? path.join(rootPath,"../",`FORKED_REPO/api/${folderName}/index.yaml`):`../FORKED_REPO/api/${folderName}/index.yaml`; //args[1]; //  main file of the yamls
     }
       const result = await getSwaggerYaml("example_set", outputPath);
       if(!result){

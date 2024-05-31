@@ -4,6 +4,7 @@ import path from "path";
 import simpleGit, { ResetMode, SimpleGit } from "simple-git";
 import { deleteFolderSync } from "../utils/fileUtils";
 import { isBinary } from "../utils/fileUtils";
+import {rootPath} from "electron-root-path"
 
 export const forkRepository = async (token: string, repoUrl: string) => {
   const [owner, repo] = repoUrl.replace("https://github.com/", "").split("/");
@@ -120,7 +121,7 @@ export const cloneRepo = async (
   const authenticatedUrl = `https://${token}@github.com/${userName}/${repo}.git`;
 
   const forkedCompPath = isBinary
-    ? path.join(path.dirname(process.execPath), "./FORKED_REPO")
+    ? path.join(rootPath,"../", "FORKED_REPO")
     : "../../../../backend-editor/FORKED_REPO";
 
   const localPath = path.resolve(__dirname, forkedCompPath);

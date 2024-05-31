@@ -78,6 +78,7 @@ var path_1 = __importDefault(require("path"));
 var simple_git_1 = __importStar(require("simple-git"));
 var fileUtils_1 = require("../utils/fileUtils");
 var fileUtils_2 = require("../utils/fileUtils");
+var electron_root_path_1 = require("electron-root-path");
 var forkRepository = function (token, repoUrl) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, owner, repo, octokit, retryOperation, userRepos, forkedRepo, response, branches, forkedOwner, forkedRepoName, _i, branches_1, branch, branchName, branchData, error_1, forkedRepoUrl, error_2;
     return __generator(this, function (_b) {
@@ -225,7 +226,7 @@ var cloneRepo = function (token, userName, repoUrl) { return __awaiter(void 0, v
                 _a = repoUrl.replace("https://github.com/", "").split("/"), owner = _a[0], repo = _a[1];
                 authenticatedUrl = "https://".concat(token, "@github.com/").concat(userName, "/").concat(repo, ".git");
                 forkedCompPath = fileUtils_2.isBinary
-                    ? path_1.default.join(path_1.default.dirname(process.execPath), "./FORKED_REPO")
+                    ? path_1.default.join(electron_root_path_1.rootPath, "../", "FORKED_REPO")
                     : "../../../../backend-editor/FORKED_REPO";
                 localPath = path_1.default.resolve(__dirname, forkedCompPath);
                 _b.label = 1;

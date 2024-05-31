@@ -14,15 +14,6 @@ var git_1 = require("./routes/git");
 var upload_1 = require("./routes/upload");
 var fileUtils_1 = require("./utils/fileUtils");
 var app = (0, express_1.default)();
-var fs = require("fs")
-var morgan = require("morgan")
-var electron = require('electron').app;
-
-console.log(electron.getAppPath())
-
-const accessLogStream = fs.createWriteStream(path_1.default.join(__dirname, 'access.log'), { flags: 'a' });
-app.use(morgan('combined', { stream: accessLogStream }));
-
 app.use((0, cors_1.default)());
 // view engine setup
 app.set("views", path_1.default.join(__dirname, "views"));
@@ -60,7 +51,6 @@ app.use(function (err, req, res, next) {
     res.render("error");
 });
 var port = process.env.PORT || 1000;
-
 app.listen(port, function () {
     console.log("Server running on port ".concat(port));
 });

@@ -2,10 +2,11 @@ import fs from "fs";
 import fse = require("fs-extra");
 const fs_p = require("fs").promises;
 import path from "path";
+import {rootPath} from "electron-root-path"
 
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
-export const isBinary = process.argv[0] === process.execPath;
+export const isBinary = rootPath.split(".").pop() === "app";
 
 export async function loadYamlWithRefs(filePath) {
   try {
