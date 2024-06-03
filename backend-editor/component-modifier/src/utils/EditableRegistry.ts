@@ -10,6 +10,7 @@ import {
   ExampleFolderType,
 } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
+import logger from "../utils/logger"
 
 type exampleYaml = Record<
   string,
@@ -46,7 +47,7 @@ export class EditableRegistry {
       name
     );
 
-    // console.log("Loading Component:", comp.folderPath);
+    // logger.info("Loading Component:", comp.folderPath);
     let compFiles = await fs_p.readdir(comp.folderPath, {
       withFileTypes: true,
     });
@@ -81,7 +82,7 @@ export class EditableRegistry {
       const ymlPath = `${comp.folderPath}/tags/index.yaml`;
       const indexExists = fs.existsSync(ymlPath);
       let data: any = "";
-      console.log(`Yml exists: ${indexExists} def exists: ${defExists}`);
+      logger.info(`Yml exists: ${indexExists} def exists: ${defExists}`);
       if (indexExists) {
         data = await loadYamlWithRefs(ymlPath);
       }
@@ -135,7 +136,7 @@ export class EditableRegistry {
       const ymlPath = `${comp.folderPath}/enum/index.yaml`;
       const indexExists = fs.existsSync(ymlPath);
       let data: any = "";
-      console.log(`Yml exists: ${indexExists} def exists: ${defExists}`);
+      logger.info(`Yml exists: ${indexExists} def exists: ${defExists}`);
       if (indexExists) {
         data = await loadYamlWithRefs(ymlPath);
       }
@@ -202,7 +203,7 @@ export class EditableRegistry {
       const ref = indexData[key].example_set.$ref;
       const folderName = ref.split("/")[1];
       const folderPath = `${exampleFolder.folderPath}/${folderName}`;
-      // console.log("folderName", folderName, key);
+      // logger.info("folderName", folderName, key);
       try {
         if (fs.existsSync(folderPath)) {
           await renameFolder(folderPath, key);
@@ -210,7 +211,7 @@ export class EditableRegistry {
           indexData[key].example_set.$ref = `./${key}/${ymlName}`;
         }
       } catch (e) {
-        console.log("skipping rename", e);
+        logger.info("skipping rename", e);
       }
     }
     const exampleFiles = await fs_p.readdir(exampleFolder.folderPath, {
@@ -232,7 +233,7 @@ export class EditableRegistry {
           file.path || exampleFolder.folderPath, // handle undefined path as binary mode doesn't provide path variable
           indexData[exampleDomainName].example_set.$ref
         );
-        console.log("secondary path", secondaryPath);
+        logger.info("secondary path", secondaryPath);
         if (fs.existsSync(secondaryPath)) {
           await fs_p.rename(secondaryPath, subIndexPath);
         }

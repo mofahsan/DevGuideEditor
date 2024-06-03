@@ -2,13 +2,14 @@ import createError from "http-errors";
 import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
-import logger from "morgan";
 import cors from "cors";
 import { app as indexRouter } from "./routes/index";
 import { app as pathRouter } from "./routes/users";
 import { app as gitRouter } from "./routes/git";
 import { app as uploadRouter } from "./routes/upload";
 import { isBinary } from "./utils/fileUtils";
+import logger from './utils/logger';
+
 
 const app = express();
 app.use(cors());
@@ -16,7 +17,6 @@ app.use(cors());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
-app.use(logger("dev"));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Serve React build files
 
 // Define your API routes
-// app.use("/direct", indexRouter);
+// app.use("/direct", indexRouter);q
 app.use("/tree", pathRouter);
 app.use("/git", gitRouter);
 app.use("/local", uploadRouter);
@@ -35,7 +35,7 @@ if(isBinary){
   app.use(express.static(path.join(__dirname, "react-build")));
 
   app.get("*", (req, res) => {
-    console.log("Serving React build");
+    logger.info("Serving React build");
     res.sendFile(path.join(__dirname, "react-build", "index.html"));
   });
 }
@@ -58,5 +58,5 @@ app.use(function (err, req, res, next) {
 
 const port = process.env.PORT || 1000;
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  logger.info(`Server running on port ${port}`);
 });

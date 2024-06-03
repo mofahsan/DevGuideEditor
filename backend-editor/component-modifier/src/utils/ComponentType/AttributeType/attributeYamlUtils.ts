@@ -3,6 +3,8 @@ import yaml from "js-yaml";
 import path from "path";
 import { readYamlFile } from "../../fileUtils";
 import { AttributeRow } from "./AttributeRow";
+import logger from "../../logger"
+
 
 export function getSheets(yamlData) {
   let sheets = {};
@@ -69,7 +71,7 @@ export function updateRows(
 ) {
   // Check if the specified sheet exists in the data.
   if (!data[sheetName]) {
-    console.error(`Sheet name "${sheetName}" does not exist.`);
+    logger.error(`Sheet name "${sheetName}" does not exist.`);
     return;
   }
 
@@ -100,22 +102,22 @@ export function updateRows(
   // Concatenate the additional new rows to the updated rows array.
   data[sheetName] = updatedRows.concat(additionalNewRows);
 
-  console.log(`Rows updated successfully in sheet "${sheetName}".`);
+  logger.info(`Rows updated successfully in sheet "${sheetName}".`);
 }
 
 export function sheetsToYAML(sheets) {
   let obj = {};
-  console.log(sheets);
+  logger.info(sheets);
   for (const key in sheets) {
     const element = sheets[key];
     obj[key] = convertDetailedPathsToNestedObjects(element);
   }
-  console.log("test ", obj);
+  logger.info("test ", obj);
   return yaml.dump(obj);
 }
 
 function listDetailedPaths(yamlString) {
-  // console.log(yamlString);
+  // logger.info(yamlString);
   try {
     // Parse the YAML string into a JavaScript object
     const obj = yaml.load(yamlString);
@@ -131,7 +133,7 @@ function listDetailedPaths(yamlString) {
     // Return the array of detailed paths
     return detailedPaths;
   } catch (e) {
-    console.error("Error parsing YAML or iterating keys:", e);
+    logger.error("Error parsing YAML or iterating keys:", e);
     return [];
   }
 }
@@ -205,11 +207,11 @@ function convertDetailedPathsToNestedObjects(detailedPaths) {
 //       "../../../../ONDC-NTS-Specifications/api/cp0/ATTRIBUTES/CREDIT/index.yaml"
 //     )
 //   );
-//   // console.log(d);
+//   // logger.info(d);
 //   const li = listDetailedPaths(d);
-//   // console.log(li);
+//   // logger.info(li);
 //   // const data = convertDetailedPathsToYAML(li);
 //   const data = sheetsToYAML({ credit: li });
-//   console.log(data);
-//   // console.log();
+//   logger.info(data);
+//   // logger.info();
 // })();

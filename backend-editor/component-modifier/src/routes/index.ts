@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import { initRegistry } from "../utils/RegisterList";
 import { EditableRegistry } from "../utils/EditableRegistry";
+import logger from "../utils/logger"
 
 const sessionInstances = {};
 initRegistry();
@@ -24,7 +25,7 @@ function checkQueryParams(req, res, next) {
   // Check if both query parameters are present
   if (!editableID || !editableName || !sessionID) {
     // If any parameter is missing, send an error response
-    console.log("Missing required query parameters");
+    logger.info("Missing required query parameters");
     res.status(400).json({
       error:
         "Missing required query parameters. Please include all editableID, editableName,sessionID.",
@@ -55,7 +56,7 @@ app.use(async (req: any, res, next) => {
   let target = null;
   try {
     target = await comp.getTarget(req.editableID, req.editableName, comp);
-    // console.log("target:", target);
+    // logger.info("target:", target);
     req.target = target;
     next();
   } catch {
@@ -64,12 +65,12 @@ app.use(async (req: any, res, next) => {
 });
 
 app.get("/guide", async (req: any, res) => {
-  // console.log("test", req.editableID);
+  // logger.info("test", req.editableID);
   try {
     const data = await req.target.getData();
     res.status(200).send(data);
   } catch (err) {
-    console.log(err);
+    logger.info(err);
     res.status(404).send("Data Not Found!");
   }
 });
@@ -79,7 +80,7 @@ app.post("/guide", async (req: any, res) => {
     await req.target.add(req.body);
     res.status(200).send("Data Added!");
   } catch (err) {
-    console.log(err);
+    logger.info(err);
     res.status(400).send("Data Not Added!");
   }
 });
@@ -92,7 +93,7 @@ app.put("/guide", async (req: any, res) => {
 app.delete("/guide", async (req: any, res) => {
   const comp = sessionInstances[req.sessionID];
   const parent = await comp.findParent(req.editableID, req.editableName, comp);
-  console.log("PARENT IS ", parent);
+  logger.info("PARENT IS ", parent);
   if (parent == "-1") {
     comp.destroy();
     delete sessionInstances[req.sessionID];

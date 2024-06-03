@@ -122,9 +122,9 @@ function convertDetailedPathsToNestedObjects(detailedPaths: FlowObject[]) {
 //     "../../../../../ONDC-NTS-Specifications/flow/index.yaml"
 //   );
 //   const data = await loadYamlWithRefs(filePath);
-//   //   console.log(JSON.stringify(data, null, 2));
+//   //   logger.info(JSON.stringify(data, null, 2));
 //   const det = listDetailedPaths(data);
 //   const nested = convertDetailedPathsToNestedObjects(det);
-//   console.log(JSON.stringify(det, null, 2));
-//   console.log(convertToYamlWithRefs(nested));
+//   logger.info(JSON.stringify(det, null, 2));
+//   logger.info(convertToYamlWithRefs(nested));
 // })();

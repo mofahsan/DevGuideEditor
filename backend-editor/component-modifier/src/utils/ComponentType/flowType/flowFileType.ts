@@ -9,6 +9,7 @@ import {
   flowFromApi,
   flowToNested,
 } from "./flowUtils";
+import logger from "../../logger"
 
 type FlowDel = Record<string, FlowObject[] | string>;
 
@@ -23,7 +24,7 @@ export class FlowFileType extends FileTypeEditable {
 
   async getData(): Promise<Record<string, FlowObject[]>> {
     const response = flowFromApi(await readYamlFile(this.yamlPathLong));
-    console.log("ahsan")
+    logger.info("ahsan")
     return response
   }
 

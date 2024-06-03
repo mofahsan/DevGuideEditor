@@ -4,6 +4,8 @@ import { readYamlFile } from "../../fileUtils";
 import yaml from "js-yaml";
 import { ExampleDomainFolderType } from "./ExampleDomainFolderType";
 import { readFile } from "fs/promises";
+import logger from "../../logger"
+
 type ExampleFolderYaml = Record<
   string,
   { summary: string; description: string }
@@ -54,7 +56,7 @@ export class ExampleFolderType extends folderTypeEditable {
   }
   async getReferenceData() {
     const refs: { $ref: string; value: any }[] = [];
-    console.log("getting reference data");
+    logger.info("getting reference data");
     for (const child of this.childrenEditables) {
       const data: Record<
         string,

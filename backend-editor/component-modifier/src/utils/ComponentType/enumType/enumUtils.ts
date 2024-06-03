@@ -111,6 +111,6 @@ function convertDetailedPathsToNestedObjects(detailedPaths: enumObject[]) {
 //   // const yml = yaml.load(data);
 //   const det = listDetailedPaths(data);
 //   const nested = convertDetailedPathsToNestedObjects(det);
-//   console.log(JSON.stringify(det, null, 2));
-//   // console.log(convertToYamlWithRefs(nested));
+//   logger.info(JSON.stringify(det, null, 2));
+//   // logger.info(convertToYamlWithRefs(nested));
 // })();

@@ -2,6 +2,8 @@ import path from "path";
 import { loadYamlWithRefs } from "../../fileUtils";
 import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 import yaml from "js-yaml";
+import logger from "../../logger"
+
 
 export interface SingleTag {
   code: string;
@@ -151,9 +153,9 @@ function convertDetailedPathsToNestedObjects(detailedPaths: TagObject[]) {
 //     "../../../../../ONDC-NTS-Specifications/tags/index.yaml"
 //   );
 //   const data = await loadYamlWithRefs(filePath);
-//   //   console.log(JSON.stringify(data, null, 2));
+//   //   logger.info(JSON.stringify(data, null, 2));
 //   const det = listDetailedPaths(data);
 //   const nested = convertDetailedPathsToNestedObjects(det);
-//   console.log(JSON.stringify(det, null, 2));
-//   console.log(convertToYamlWithRefs(nested));
+//   logger.info(JSON.stringify(det, null, 2));
+//   logger.info(convertToYamlWithRefs(nested));
 // })();

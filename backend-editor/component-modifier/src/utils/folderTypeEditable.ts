@@ -2,6 +2,7 @@ import { close } from "fs";
 import { Editable } from "./Editable";
 import { EditableRegistry } from "./EditableRegistry";
 import { FileTypeEditable } from "./FileTypeEditable";
+import logger from "../utils/logger"
 
 export interface UpdateObj {
   oldName: string;
@@ -22,7 +23,7 @@ export abstract class folderTypeEditable extends Editable {
    * @param {string} newEditable.name - The name of the editable.
    */
   async add(newEditable: { ID: string; name: string }) {
-    console.log(this.childrenEditables.map((s) => s.name));
+    logger.info(this.childrenEditables.map((s) => s.name));
     if (this.childrenEditables.map((s) => s.name).includes(newEditable.name)) {
       throw new Error("Editable Already Exists!");
     }
@@ -39,17 +40,17 @@ export abstract class folderTypeEditable extends Editable {
    * @param {Object} deleteTarget - The new editable object to delete.
    */
   async remove(deleteTarget: { folderName: string }) {
-    console.log("DELETING", deleteTarget);
+    logger.info("DELETING", deleteTarget);
     const target = this.childrenEditables.find(
       (s) => s.name === deleteTarget.folderName
     );
     this.childrenEditables = this.childrenEditables.filter((s) => s !== target);
-    // console.log(target);
+    // logger.info(target);
     await target.destroy();
   }
 
   async update(update: UpdateObj) {
-    console.log("PATCHING", update);
+    logger.info("PATCHING", update);
     const target = this.childrenEditables.find(
       (s) => s.name === update.oldName
     );
@@ -91,7 +92,7 @@ export abstract class folderTypeEditable extends Editable {
 
   getTarget(id, name, first): Editable {
     const searchChildEditable = (editable: Editable) => {
-      // console.log(editable.getRegisterID(), editable.name);
+      // logger.info(editable.getRegisterID(), editable.name);
       if (editable.getRegisterID() === id && editable.name === name) {
         return editable;
       }
@@ -103,23 +104,23 @@ export abstract class folderTypeEditable extends Editable {
       }
 
       for (const childEditable of editable.childrenEditables) {
-        console.log(
+        logger.info(
           "ITERATING: ",
           childEditable.getRegisterID(),
           childEditable.name
         );
         const target = searchChildEditable(childEditable);
         if (target) {
-          console.log("FOUND!");
+          logger.info("FOUND!");
           return target;
         }
       }
-      console.log("ITERATION FAILED!");
+      logger.info("ITERATION FAILED!");
       return null;
     };
     const target = searchChildEditable(first);
     if (!target) {
-      console.log("NOT FOUND!");
+      logger.info("NOT FOUND!");
       throw new Error("Editable Not Found!");
     }
     return target;

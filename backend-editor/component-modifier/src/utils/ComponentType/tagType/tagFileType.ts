@@ -10,6 +10,8 @@ import {
   tagsFromApi,
   tagsToNested,
 } from "./tagsUtils";
+import logger from "../../logger"
+
 
 interface TagDelObject {
   path: string;
@@ -33,7 +35,7 @@ export class TagFileType extends FileTypeEditable {
   }
 
   async add(dataToAdd: Record<string, TagObject[]>) {
-    console.log("adding data", dataToAdd);
+    logger.info("adding data", dataToAdd);
     this.setMissingReferences(dataToAdd);
     const data = await this.getData();
     const newData = mergeTagObjectRecords(data, dataToAdd);

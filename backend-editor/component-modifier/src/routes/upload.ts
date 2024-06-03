@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import { deleteFolderSync } from "../utils/fileUtils";
 import axios from "axios";
+import logger from "../utils/logger"
 
 export const app = express();
 
@@ -39,7 +40,7 @@ app.post("/upload", async (req, res) => {
   await deleteFolderSync(
     path.resolve(__dirname, "../../../ONDC-NTS-Specifications/api/uploads")
   );
-  console.log("POST /local/upload Request Body:", req.body);
+  logger.info("POST /local/upload Request Body:", req.body);
   upload(req, res, (err) => {
     if (err) {
       return res.status(500).json({ message: "Upload failed", error: err });

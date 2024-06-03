@@ -5,6 +5,7 @@ import simpleGit, { ResetMode, SimpleGit } from "simple-git";
 import { deleteFolderSync } from "../utils/fileUtils";
 import { isBinary } from "../utils/fileUtils";
 import {rootPath} from "electron-root-path"
+import logger from "../utils/logger"
 
 export const forkRepository = async (token: string, repoUrl: string) => {
   const [owner, repo] = repoUrl.replace("https://github.com/", "").split("/");
@@ -19,7 +20,7 @@ export const forkRepository = async (token: string, repoUrl: string) => {
         return await operation();
       } catch (error) {
         if (i < retries - 1) {
-          console.log(`Retrying... (${i + 1}/${retries})`);
+          logger.info(`Retrying... (${i + 1}/${retries})`);
           await new Promise((res) => setTimeout(res, delay));
         } else {
           throw error;
@@ -35,10 +36,10 @@ export const forkRepository = async (token: string, repoUrl: string) => {
     );
 
     const forkedRepo = userRepos.find((r) => r.name === repo);
-    // console.log(userRepos);
-    console.log(forkedRepo);
+    // logger.info(userRepos);
+    logger.info(forkedRepo);
     if (forkedRepo) {
-      console.log("Repository is already forked:", forkedRepo.html_url);
+      logger.info("Repository is already forked:", forkedRepo.html_url);
       return forkedRepo.html_url;
     }
 
@@ -50,7 +51,7 @@ export const forkRepository = async (token: string, repoUrl: string) => {
       })
     );
 
-    console.log("Repository forked successfully:", response.data);
+    logger.info("Repository forked successfully:", response.data);
 
     // Get the list of branches from the original repository
     const { data: branches } = await retryOperation(() =>
@@ -65,7 +66,7 @@ export const forkRepository = async (token: string, repoUrl: string) => {
 
     for (const branch of branches) {
       const branchName = branch.name;
-      console.log(`Processing branch: ${branchName}`);
+      logger.info(`Processing branch: ${branchName}`);
 
       try {
         // Get the commit SHA of the branch
@@ -83,16 +84,16 @@ export const forkRepository = async (token: string, repoUrl: string) => {
           sha: branchData.commit.sha,
         });
 
-        console.log(`Branch ${branchName} processed successfully.`);
+        logger.info(`Branch ${branchName} processed successfully.`);
       } catch (error) {
-        console.error(
+        logger.error(
           `Failed to process branch ${branchName}: ${error.message}`
         );
-        console.log(`Skipping branch ${branchName}.`);
+        logger.info(`Skipping branch ${branchName}.`);
       }
     }
 
-    console.log("All branches have been processed.");
+    logger.info("All branches have been processed.");
     const forkedRepoUrl = `https://github.com/${forkedOwner}/${repo}.git`;
     return forkedRepoUrl;
   } catch (error) {
@@ -131,7 +132,7 @@ export const cloneRepo = async (
       const existingRepo = simpleGit(localPath);
       const repoName = await getRepoName(existingRepo);
       if (repoName === repo) {
-        console.log("Repository already cloned");
+        logger.info("Repository already cloned");
 
         return;
       } else {
@@ -147,9 +148,9 @@ export const cloneRepo = async (
 
     // Add the original repository as upstream remote
     await clonedRepo.addRemote("upstream", repoUrl);
-    console.log(`Repository cloned`);
+    logger.info(`Repository cloned`);
   } catch (error) {
-    console.error("Error cloning repository:", error.message);
+    logger.error("Error cloning repository:", error.message);
     throw error;
   }
 };
@@ -169,11 +170,11 @@ export const changeBranch = async (
   const currentBranchSummary = await git.branch();
   let currentBranch = "remotes/" + currentBranchSummary.current;
   currentBranch = extractBranchName(currentBranch);
-  console.log(`Current branch is ${currentBranch}`);
-  // console.log(git.stashList)
+  logger.info(`Current branch is ${currentBranch}`);
+  // logger.info(git.stashList)
 
   if (currentBranch === branchName) {
-    console.log(`Already on branch ${branchName}`);
+    logger.info(`Already on branch ${branchName}`);
     return;
   }
 
@@ -182,7 +183,7 @@ export const changeBranch = async (
   try {
     // Stash any current changes with a specific message
     await git.stash(["push", "-u", "-m", stashMessage]);
-    console.log(`Stashed changes for branch ${currentBranch}`);
+    logger.info(`Stashed changes for branch ${currentBranch}`);
 
     // Check if the branch exists locally
     const branchSummary = await git.branch();
@@ -191,23 +192,23 @@ export const changeBranch = async (
       await git.fetch("origin", branchName);
     }
     // Checkout the branch
-    console.log("Checking out branch", branchName);
+    logger.info("Checking out branch", branchName);
     await git.checkout(branchName);
     // await git.checkoutBranch(branchName, "origin");
-    console.log(`Switched to branch ${branchName}`);
+    logger.info(`Switched to branch ${branchName}`);
 
     // Check if there are stashes for the new branch and apply the most recent one
     const stashList = await git.stashList();
-    // console.log(stashList.all);
+    // logger.info(stashList.all);
     const branchStashIndex = stashList.all.findIndex((stash) =>
       stash.message.includes(`stash@${extractBranchName(branchName)}`)
     );
     if (branchStashIndex !== -1) {
       await git.stash(["pop", `stash@{${branchStashIndex}}`]);
-      console.log(`Applied stash for branch ${branchName}`);
+      logger.info(`Applied stash for branch ${branchName}`);
     }
   } catch (error) {
-    console.error("Error switching branches:", error.message);
+    logger.error("Error switching branches:", error.message);
     throw error;
   }
 };
@@ -215,7 +216,7 @@ export const changeBranch = async (
 export const getBranches = async (repoPath: string) => {
   const git = simpleGit(repoPath);
   const branches = await git.branch();
-  console.log(branches);
+  logger.info(branches);
   let allBranches = branches.all;
   allBranches = allBranches.filter((b) => b.includes("remotes/origin"));
 
@@ -238,24 +239,24 @@ export const stashFetchCommitAndPushChanges = async (
 
     let withoutOrigin = extractBranchName(branch);
     await git.add("./*");
-    console.log("Changes added successfully");
+    logger.info("Changes added successfully");
 
     await git.commit(commitMessage);
-    console.log("Changes committed successfully");
-    console.log("HEAD:" + withoutOrigin);
+    logger.info("Changes committed successfully");
+    logger.info("HEAD:" + withoutOrigin);
 
     const res = await git.push("origin", "HEAD:" + withoutOrigin);
 
-    console.log(res);
-    console.log("Changes pushed successfully to branch:", withoutOrigin);
+    logger.info(res);
+    logger.info("Changes pushed successfully to branch:", withoutOrigin);
     // git.checkoutBranch(withoutOrigin, "origin/" + withoutOrigin);
     // await git.checkout("remotes")
-    console.log("checkout", "remotes/" + branch);
+    logger.info("checkout", "remotes/" + branch);
     await git.checkout("master");
     await git.checkout("remotes/" + branch);
     // await changeBranch(repoPath, "remotes/" + branch);
   } catch (error) {
-    console.error("Error during commit and push process:", error.message);
+    logger.error("Error during commit and push process:", error.message);
     throw error;
   }
 };
@@ -278,11 +279,11 @@ export const raisePr = async (
 
     // const branchName = extractBranchName((await git.branch()).current);
 
-    console.log("Branch Name", extractedBranchName);
+    logger.info("Branch Name", extractedBranchName);
     const {
       data: { login: forkedOwner },
     } = await octokit.users.getAuthenticated();
-    console.log("fileds", {
+    logger.info("fileds", {
       owner,
       repo,
       title: prTitle,
@@ -300,11 +301,11 @@ export const raisePr = async (
     });
     return pullRequest.html_url;
   } catch (e) {
-    console.log("Error creating PR");
-    console.log(e.message);
+    logger.info("Error creating PR");
+    logger.info(e.message);
     throw new Error(`Error creating PR: ${e.message}`);
   }
-  // console.log("Pull Request created successfully:", pullRequest.html_url);
+  // logger.info("Pull Request created successfully:", pullRequest.html_url);
 };
 
 export async function getStatus(repoPath: string) {
@@ -325,32 +326,32 @@ const getRepoName = async (git: SimpleGit) => {
  */
 export const resetCurrentBranch = async (repoPath: string): Promise<void> => {
   const git = simpleGit(repoPath);
-  console.log(await printAllRemotes(git));
+  logger.info(await printAllRemotes(git));
   try {
     // Get the current branch name
     const currentBranchSummary = await git.branch();
     const currentBranch = currentBranchSummary.current;
     const stashMessage = `stash@${currentBranch}`;
 
-    console.log(`Current branch is ${currentBranch}`);
+    logger.info(`Current branch is ${currentBranch}`);
 
     // Fetch all branches to ensure local and remote branches are up to date
     await git.fetch(["upstream"]);
-    console.log("Fetched all branches from remote");
+    logger.info("Fetched all branches from remote");
 
     // Stash any current changes, including untracked files, with a specific message
     await git.stash(["push", "-u", "-m", stashMessage]);
-    console.log(`Stashed changes for branch ${currentBranch}`);
+    logger.info(`Stashed changes for branch ${currentBranch}`);
 
     // Pull the latest changes from the remote repository
     let withoutOrigin = currentBranch;
     if (currentBranch.includes("origin")) {
       withoutOrigin = currentBranch.split("/")[1];
     }
-    console.log("withoutOrigin", withoutOrigin);
+    logger.info("withoutOrigin", withoutOrigin);
     await git.reset(ResetMode.HARD);
     await git.pull("origin", withoutOrigin);
-    console.log(
+    logger.info(
       `Pulled latest changes from upstream for branch ${currentBranch}`
     );
 
@@ -361,10 +362,10 @@ export const resetCurrentBranch = async (repoPath: string): Promise<void> => {
     );
     if (branchStashIndex !== -1) {
       await git.stash(["drop", `stash@{${branchStashIndex}}`]);
-      console.log(`Deleted stash for branch ${currentBranch}`);
+      logger.info(`Deleted stash for branch ${currentBranch}`);
     }
   } catch (error) {
-    console.error("Error resetting branch:", error.message);
+    logger.error("Error resetting branch:", error.message);
     throw error;
   }
 };
@@ -374,19 +375,19 @@ export const printAllRemotes = async (git: SimpleGit): Promise<void> => {
     // Get the list of all remote repositories
     const remotes = await git.getRemotes(true);
     if (remotes.length === 0) {
-      console.log("No remote repositories found.");
+      logger.info("No remote repositories found.");
       return;
     }
 
-    console.log("Remote repositories:");
+    logger.info("Remote repositories:");
     remotes.forEach((remote) => {
-      console.log(`Name: ${remote.name}`);
-      console.log(`Fetch URL: ${remote.refs.fetch}`);
-      console.log(`Push URL: ${remote.refs.push}`);
-      console.log("---");
+      logger.info(`Name: ${remote.name}`);
+      logger.info(`Fetch URL: ${remote.refs.fetch}`);
+      logger.info(`Push URL: ${remote.refs.push}`);
+      logger.info("---");
     });
   } catch (error) {
-    console.error("Error fetching remote repositories:", error.message);
+    logger.error("Error fetching remote repositories:", error.message);
     throw error;
   }
 };
@@ -421,11 +422,11 @@ export function extractBranchName(fullBranchName: string): string {
 //   //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
 //   //     "release-FIS12-2.0.0"
 //   //   );
-//   // console.log(await getStatus(repoPath));
+//   // logger.info(await getStatus(repoPath));
 //   // changeBranch(repoPath, "master");
 //   // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
 //   // await new Promise((resolve) => setTimeout(resolve, 2000));
-//   // console.log(await getBranches(repoPath));
+//   // logger.info(await getBranches(repoPath));
 //   // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
 //   // await resetCurrentBranch(repoPath);
 // })();

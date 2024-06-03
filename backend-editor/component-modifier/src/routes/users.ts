@@ -15,6 +15,7 @@ import { buildWrapper } from "../utils/build/build";
 import { isBinary } from "../utils/fileUtils";
 import {rootPath} from "electron-root-path"
 import path from "path"
+import logger from "../utils/logger"
 
 interface EditableMap<T> {
   [key: string]: T;
@@ -43,7 +44,7 @@ app.all("/guide/*", async (req: any, res, next) => {
   const fullPath = req.params[0];
   const pathSegments = fullPath.split("/");
   if (pathSegments.length < 1) {
-    console.log(pathSegments);
+    logger.info(pathSegments);
     res.status(400).json({
       error: "Invalid path",
       errorMessage: "Invalid path",
@@ -70,13 +71,13 @@ app.all("/guide/*", async (req: any, res, next) => {
   target = sessionInstances[pathSegments[0]];
   for (const item of pathSegments.slice(1)) {
     if (target instanceof folderTypeEditable) {
-      // console.log("children", target.chilrenEditables);
+      // logger.info("children", target.chilrenEditables);
       const sub = target.childrenEditables.find((child) => child.name === item);
       if (sub) {
         parent = target;
         target = sub;
       } else {
-        console.log("PATH DONT EXIST");
+        logger.info("PATH DONT EXIST");
         res.status(404).json({
           error: "PATH DONT EXIST",
           errorMessage: "could not find path",
@@ -84,7 +85,7 @@ app.all("/guide/*", async (req: any, res, next) => {
         return;
       }
     } else if (target instanceof FileTypeEditable) {
-      console.log("PATH DONT EXIST", target);
+      logger.info("PATH DONT EXIST", target);
       res.status(404).json({
         error: "PATH DONT EXIST",
         errorMessage: "could not find path",
@@ -116,7 +117,7 @@ app.post("/reload", async (req, res, next) => {
     //   oldPath,
     //   currentSessionID
     // );
-    console.log(sessionInstances);
+    logger.info(sessionInstances);
     for (const key in sessionInstances) {
       sessionInstances[key] = await EditableRegistry.loadComponent(
         forkedCompPath,
@@ -125,7 +126,7 @@ app.post("/reload", async (req, res, next) => {
     }
     res.status(200).send("DATA RELOADED");
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,
@@ -139,7 +140,7 @@ app.post("/guide/*", async (req, res, next) => {
     await target.add(req.body);
     return res.status(201).send("DATA ADDED");
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,
@@ -150,16 +151,16 @@ app.post("/guide/*", async (req, res, next) => {
 app.put("/guide/*", async (req, res, next) => {
   try {
     // const query = { ...req.query };
-    console.log("UNDOING");
+    logger.info("UNDOING");
     const source = await history.undoLastAction();
     const targetName = req.params[0].split("/")[0];
-    console.log(targetName);
+    logger.info(targetName);
     const comp = sessionInstances[targetName];
     const folderPath = comp.folderPath;
     await comp.destroy();
     await overwriteFolder(source, folderPath);
     await deleteFolderSync(source);
-    console.log("COPY DONE");
+    logger.info("COPY DONE");
     //`../../../FORKED_REPO/api/${targetName}`
     sessionInstances["components"] = await EditableRegistry.loadComponent(
       forkedCompPath,
@@ -167,8 +168,8 @@ app.put("/guide/*", async (req, res, next) => {
     );
     res.status(200).send("DATA UNDONE");
   } catch (e) {
-    console.log("CAUGHT ERROR");
-    console.error(e);
+    logger.info("CAUGHT ERROR");
+    logger.error(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,
@@ -179,12 +180,12 @@ app.put("/guide/*", async (req, res, next) => {
 app.patch("/guide/*", async (req, res, next) => {
   try {
     await history.addHistory(sessionInstances[currentSessionID]);
-    console.log("updating");
+    logger.info("updating");
 
     await target.update(req.body);
     return res.status(200).send("DATA UPDATED");
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,
@@ -195,7 +196,7 @@ app.patch("/guide/*", async (req, res, next) => {
 app.delete("/guide/*", async (req, res, next) => {
   try {
     await history.addHistory(sessionInstances[currentSessionID]);
-    console.log("query", req.query);
+    logger.info("query", req.query);
     if (Object.keys(req.query).length > 0) {
       const body: any = { ...req.query };
       await target.remove(body);
@@ -211,7 +212,7 @@ app.delete("/guide/*", async (req, res, next) => {
     }
     res.status(200).send("DATA DELETED");
   } catch (e) {
-    console.log(e);
+    logger.info(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,

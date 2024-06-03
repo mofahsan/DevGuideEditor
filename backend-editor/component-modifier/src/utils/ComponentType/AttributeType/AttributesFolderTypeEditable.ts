@@ -1,6 +1,7 @@
 import { AttributeFile } from "./AttributeRow";
 import { folderTypeEditable, UpdateObj } from "../../folderTypeEditable";
 import { updateYamlRefAttr } from "../../yamlUtils";
+import logger from "../../logger"
 
 export class AttributesFolderTypeEditable extends folderTypeEditable {
   getRegisterID(): string {
@@ -10,14 +11,14 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
   static REGISTER_ID = "ATTRIBUTE_FOLDER";
 
   constructor(path, id) {
-    console.log(path);
+    logger.info(path);
     super(path, id);
     this.allowedList = [AttributeFile.REGISTER_ID];
   }
 
   async add(new_editable) {
     if (!this.allowedList.includes(new_editable.ID)) {
-      console.log(new_editable);
+      logger.info(new_editable);
       throw new Error(
         `Attributes only allow ${AttributeFile.REGISTER_ID} as children.`
       );

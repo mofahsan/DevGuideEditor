@@ -12,14 +12,14 @@ import {
 } from "../gitUtils/gitUtils";
 import path from "path";
 import axios from "axios";
-import { isBinary } from "../utils/fileUtils";
-import {rootPath} from "electron-root-path"
+import {binaryPathResolver } from "../utils/fileUtils";
+import logger from "../utils/logger"
 
 export const app = express();
 app.use(express.json());
 const forkRepoPath = "../../../../backend-editor/FORKED_REPO"
 const forkedRepoPathBinary = "FORKED_REPO"
-const forkedRepoComputedPath = isBinary? path.join(rootPath,"../", forkedRepoPathBinary) : forkRepoPath
+const forkedRepoComputedPath = binaryPathResolver(forkedRepoPathBinary,forkRepoPath)
 
 
 app.post("/init", async (req, res) => {
@@ -33,7 +33,7 @@ app.post("/init", async (req, res) => {
     link = await forkRepository(token, repoUrl);
     await cloneRepo(token, username, repoUrl);
   } catch(err) {
-    console.log(err)
+    logger.info(err)
     res.status(500).send("Error initializing repository");
     return;
   }
@@ -108,7 +108,7 @@ app.post("/openPR", async (req, res) => {
     const extractedBranchName = extractBranchName(
       (await getBranches(repoPath)).currentBranch
     );
-    console.log("Branch name", extractedBranchName);
+    logger.info("Branch name", extractedBranchName);
     const pr = await raisePr(
       token,
       url,
@@ -119,7 +119,7 @@ app.post("/openPR", async (req, res) => {
     );
     res.status(200).send(pr);
   } catch (err) {
-    console.log(err)
+    logger.info(err)
     res.status(500).send("Error creating PR");
   }
 });

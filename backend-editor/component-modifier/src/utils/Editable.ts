@@ -1,4 +1,5 @@
 import { deleteFolderSync, createIndexYaml, renameFolder } from "./fileUtils";
+import logger from "../utils/logger"
 
 export abstract class Editable {
   static REGISTER_ID = "EDITABLE";
@@ -12,7 +13,7 @@ export abstract class Editable {
     this.name = name;
   }
   async destroy() {
-    console.log("Destroying", this.getRegisterID(), this.folderPath);
+    logger.info("Destroying", this.getRegisterID(), this.folderPath);
     await deleteFolderSync(this.folderPath);
   }
   async initIndexYaml(path, removeContent = true) {
@@ -26,7 +27,7 @@ export abstract class Editable {
     if (this.name === "tags") {
       this.add({ ID: "TAG_FILE", name: "default" });
     }
-    // console.log("YAML Path:", this.yamlPathLong);
+    // logger.info("YAML Path:", this.yamlPathLong);
   }
   async renameFolder(newName) {
     [this.yamlPathLong, this.folderPath] = await renameFolder(

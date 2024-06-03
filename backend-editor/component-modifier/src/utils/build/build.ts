@@ -15,6 +15,7 @@ const addFormats = require("ajv-formats");
 ajv.addFormat("phone", "");
 addFormats(ajv);
 require("ajv-errors")(ajv);
+const logger = require("../logger")
 
 const args = process.argv.slice(2);
 // var example_set = args[0]
@@ -50,7 +51,7 @@ async function baseYMLFile(file) {
     const schema = await $RefParser.dereference(file);
     return schema;
   } catch (error) {
-    console.error("Error parsing schema:", error);
+    logger.warn("Error parsing schema:", error);
   }
 }
 
@@ -58,7 +59,7 @@ async function validateSchema(schema, data) {
   const validate = ajv.compile(schema);
   const valid = validate(data?.value);
   if (!valid) {
-    console.log(validate.errors);
+    logger.warn(validate.errors);
     return true;
   }
   return false;
@@ -75,7 +76,7 @@ async function validateFlows(flows, schemaMap) {
           if (step.api === api && step.api !== "form") {
             const result = await validateSchema(schemaMap[api], step.example);
             if (result) {
-              console.log("Error[flows]:", `${flowItem?.summary + "/" + api}`);
+              logger.warn("Error[flows]:", `${flowItem?.summary + "/" + api}`);
               return (hasTrueResult = true);
             }
           }
@@ -94,7 +95,7 @@ async function validateExamples(exampleSets, schemaMap) {
       if (exampleSets[example].example_set[api] && !exampleList) {
         throw Error(`Example not found for ${api}`);
       }
-      console.log(exampleList, "exampleList");
+      logger.warn(exampleList, "exampleList");
       if (exampleList !== undefined)
         for (const payload of Object.keys(exampleList)) {
           const result = await validateSchema(
@@ -102,7 +103,7 @@ async function validateExamples(exampleSets, schemaMap) {
             exampleList[payload]
           );
           if (result) {
-            console.log("error[Example] :", `${example + "/" + api}`);
+            logger.warn("error[Example] :", `${example + "/" + api}`);
             return (hasTrueResult = true);
           }
         }
@@ -316,12 +317,12 @@ async function getSwaggerYaml(example_set, outputPath) {
         paths[path]?.post?.requestBody?.content?.["application/json"]?.schema;
       schemaMap[path.substring(1)] = pathSchema;
     }
-    console.log("SKIPING FLOWS VALIDATION!");
+    logger.warn("SKIPING FLOWS VALIDATION!");
     // if (!process.argv.includes(SKIP_VALIDATION.flows)) {
     //   hasTrueResult = await validateFlows(flows, schemaMap);
     // }
     // if (!process.argv.includes(SKIP_VALIDATION.examples) && !hasTrueResult) {
-    //   console.log(exampleSets);
+    //   logger.warn(exampleSets);
     //   hasTrueResult = await validateExamples(exampleSets, schemaMap);
     // }
 
@@ -357,7 +358,7 @@ async function getSwaggerYaml(example_set, outputPath) {
         return false
     }
   } catch (error) {
-    console.log("Error generating build file", error);
+    logger.warn("Error generating build file", error);
     return false;
   }
 }
@@ -365,9 +366,9 @@ async function getSwaggerYaml(example_set, outputPath) {
 function cleanup() {
   try {
     fs.unlinkSync(tempPath);
-    console.log("Temporary file deleted");
+    logger.warn("Temporary file deleted");
   } catch (error) {
-    console.error("Error deleting temporary file:", error);
+    logger.warn("Error deleting temporary file:", error);
   }
 }
 
@@ -384,7 +385,7 @@ function buildSwagger(inPath, outPath) {
     const command = `swagger-cli bundle ${inPath} --outfile ${outPath} -t yaml`;
     execSync(command, { stdio: "inherit" });
   } catch (error) {
-    console.error(
+    logger.warn(
       "An error occurred while generating the Swagger bundle:",
       error
     );
@@ -408,7 +409,7 @@ async function GenerateYaml(base, layer, output_yaml) {
   try{
     const output = yaml.dump(base);
     fs.writeFileSync(output_yaml, output, "utf8");
-    console.log(output_yaml,"build output")
+    logger.warn(output_yaml,"build output")
     const baseData = base["x-examples"];
     for (const examplesKey of Object.keys(baseData)) {
       let { example_set: exampleSet } = baseData[examplesKey] || {};
@@ -418,7 +419,7 @@ async function GenerateYaml(base, layer, output_yaml) {
     await fs.writeFileSync(uiPath, jsonDump, "utf8");
     return true;
   }catch(e){
-    console.log(e);
+    logger.warn(e);
     return false;
   }
 }
@@ -475,6 +476,6 @@ export async function buildWrapper(folderName) {
       }
       return true;
   } catch (e) {
-    console.log(e);
+    logger.warn(e);
   }
 }

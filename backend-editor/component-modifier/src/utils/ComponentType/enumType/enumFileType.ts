@@ -9,6 +9,8 @@ import {
   enumsToNestes,
   mergeEnumObjectRecords,
 } from "./enumUtils";
+import logger from "../../logger"
+
 
 type EnumDel = Record<string, enumObject[] | string>;
 
@@ -33,10 +35,10 @@ export class EnumFileType extends FileTypeEditable {
         });
       }
     }
-    console.log(dataToAdd);
+    logger.info(dataToAdd);
     const data = await this.getData();
     const newData = mergeEnumObjectRecords(data, dataToAdd);
-    console.log(newData);
+    logger.info(newData);
     const yml = enumsToNestes(newData);
     await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
   }

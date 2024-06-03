@@ -2,6 +2,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
 import { readYamlFile } from "./fileUtils";
+import logger from "../utils/logger"
 
 export async function updateYamlRefComponents(filePath, section, del = false) {
   if (section === "enum" || section === "tags") {
@@ -161,9 +162,9 @@ async function updateYamlRef(
 
     const newYaml = yaml.dump(data);
     await fs.promises.writeFile(filePath, newYaml, "utf8");
-    console.log(`${section} has been updated with new $ref successfully.`);
+    logger.info(`${section} has been updated with new $ref successfully.`);
   } catch (error) {
-    console.error("Error updating the YAML file:", error);
+    logger.error("Error updating the YAML file:", error);
   }
 }
 
@@ -175,9 +176,9 @@ export async function overrideYaml(filePath, yamlData) {
     }
     // const newYaml = yaml.dump(data);
     await fs.promises.writeFile(filePath, yamlData, "utf8");
-    console.log(`${filePath} has been updated successfully.`);
+    logger.info(`${filePath} has been updated successfully.`);
   } catch (error) {
-    console.error("Error updating the YAML file:", error);
+    logger.error("Error updating the YAML file:", error);
   }
 }
 

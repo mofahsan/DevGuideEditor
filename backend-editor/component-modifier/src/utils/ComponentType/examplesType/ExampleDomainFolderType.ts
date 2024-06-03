@@ -10,6 +10,8 @@ import {
   GetFormData,
 } from "./exampleUtils";
 import path from "path";
+import logger from "../../logger"
+
 
 interface NewExample {
   ID: string; // use ID to determine FORM or JSON
@@ -63,7 +65,7 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     }
 
     if (newEditable.ID === "JSON") {
-      // console.log("validating json", newEditable.exampleValue);
+      // logger.info("validating json", newEditable.exampleValue);
       if (typeof newEditable.exampleValue === "string") {
         newEditable.exampleValue = JSON.parse(
           newEditable.exampleValue
@@ -73,7 +75,7 @@ export class ExampleDomainFolderType extends folderTypeEditable {
       if (!validExample) {
         throw new Error("Invalid Example JSON");
       }
-      console.log("validated json");
+      logger.info("validated json");
       await updateYamlRefExampleDomain(
         this.yamlPathLong,
         newEditable.name,
@@ -123,9 +125,9 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     exampleName?: string;
     formName?: string;
   }) {
-    console.log(deleteTarget);
+    logger.info(deleteTarget);
     if (deleteTarget.formName) {
-      console.log("deleting form", deleteTarget.formName);
+      logger.info("deleting form", deleteTarget.formName);
       await deleteFile(this.folderPath + `/form/${deleteTarget.formName}.html`);
       return;
     }

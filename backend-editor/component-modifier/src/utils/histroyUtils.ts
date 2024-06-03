@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs/promises";
 import { isBinary } from "./fileUtils";
 import {rootPath} from "electron-root-path"
+import logger from "../utils/logger"
 
 export class HistoryUtil {
   history: string[];
@@ -24,7 +25,7 @@ export class HistoryUtil {
       await deleteFolderSync(this.historyPath);
       await fs.mkdir(this.historyPath, { recursive: true });
     } catch (error) {
-      console.error("Failed to create history directory:", error);
+      logger.error("Failed to create history directory:", error);
     }
   }
 
@@ -42,7 +43,7 @@ export class HistoryUtil {
       await copyDir(components.folderPath, directoryPath);
       this.history.push(directoryPath);
     } catch (error) {
-      console.error("Failed to save history:", error);
+      logger.error("Failed to save history:", error);
     }
   }
 
@@ -51,15 +52,15 @@ export class HistoryUtil {
     try {
       const oldestHistory = this.history.shift();
       await fs.rm(oldestHistory, { recursive: true });
-      console.log(`Removed oldest history: ${oldestHistory}`);
+      logger.info(`Removed oldest history: ${oldestHistory}`);
     } catch (error) {
-      console.error("Failed to remove oldest history:", error);
+      logger.error("Failed to remove oldest history:", error);
     }
   }
 
   async undoLastAction() {
     if (this.history.length === 0) {
-      console.log("No history to undo");
+      logger.info("No history to undo");
       throw new Error("No history to undo");
     }
 
@@ -67,13 +68,13 @@ export class HistoryUtil {
       const lastHistory = this.history.pop();
       return lastHistory;
     } catch (error) {
-      console.error("Failed to get latest history:", error);
+      logger.error("Failed to get latest history:", error);
     }
   }
 }
 
 export async function CreateSave(components) {
-  console.log("Creating Save");
+  logger.info("Creating Save");
   const histroyPath = path.resolve(__dirname, "../../history");
 
   //   await copyDir(components.folderPath);

@@ -3,17 +3,23 @@ import fse = require("fs-extra");
 const fs_p = require("fs").promises;
 import path from "path";
 import {rootPath} from "electron-root-path"
+import logger from "../utils/logger"
 
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 export const isBinary = rootPath.split(".").pop() === "app";
+
+export const binaryPathResolver = (binaryPath,normalPath)=>{
+  const computedPath =  isBinary? path.join(rootPath,"../", binaryPath) : normalPath
+  return computedPath
+}
 
 export async function loadYamlWithRefs(filePath) {
   try {
     const schema = await $RefParser.dereference(filePath);
     return schema;
   } catch (error) {
-    console.error("Error parsing schema:", error);
+    logger.error("Error parsing schema:", error);
   }
 }
 
@@ -23,33 +29,33 @@ export async function createIndexYaml(
 ) {
   try {
   const folderPath = isBinary? relativeFolderPath : path.join(__dirname, relativeFolderPath);
-  console.log("Resolved folder path:", folderPath);
+  logger.info("Resolved folder path:", folderPath);
   const indexYamlPath = path.join(folderPath, "index.yaml");
   const structure = "";
 
   if (fs.existsSync(indexYamlPath) && removeContent) {
-    console.log("index.yaml already exists, deleting it...");
+    logger.info("index.yaml already exists, deleting it...");
     fs.unlinkSync(indexYamlPath);
   } else if (fs.existsSync(indexYamlPath)) {
-    console.log("index.yaml already exists, not deleting it...");
+    logger.info("index.yaml already exists, not deleting it...");
     return [indexYamlPath, folderPath];
   }
     if (!fs.existsSync(folderPath)) {
-      console.log("Folder does not exist, creating it...");
+      logger.info("Folder does not exist, creating it...");
       await fs_p.mkdir(folderPath, { recursive: true, mode: 0o700 });
     }
     await fs_p.writeFile(indexYamlPath, structure, "utf8");
-    console.log("index.yaml created successfully!");
+    logger.info("index.yaml created successfully!");
     return [indexYamlPath, folderPath];
   } catch (err) {
-    console.error("Error creating index.yaml:", err);
+    logger.error("Error creating index.yaml:", err);
   }
 }
 export async function renameFolder(folderPath: string, newName: string) {
   const parentDir = path.dirname(folderPath);
   const newFolderPath = path.join(parentDir, newName);
-  console.log("Old folder path:", folderPath);
-  console.log("New folder path:", newFolderPath);
+  logger.info("Old folder path:", folderPath);
+  logger.info("New folder path:", newFolderPath);
   try {
     await fs.promises.access(newFolderPath);
     throw new Error("Folder with the new name already exists!");
@@ -57,7 +63,7 @@ export async function renameFolder(folderPath: string, newName: string) {
     if (e.code === "ENOENT") {
       // Folder does not exist, proceed with renaming
       await fs.promises.rename(folderPath, newFolderPath);
-      console.log(`Folder renamed successfully to ${newName}`);
+      logger.info(`Folder renamed successfully to ${newName}`);
       return [newFolderPath + "/index.yaml", newFolderPath];
     } else {
       throw e;
@@ -67,18 +73,18 @@ export async function renameFolder(folderPath: string, newName: string) {
 export async function deleteFile(filePath) {
   try {
     await fs_p.unlink(filePath);
-    console.log("File deleted successfully!");
+    logger.info("File deleted successfully!");
   } catch (err) {
-    console.error("Error deleting file:", err);
+    logger.error("Error deleting file:", err);
   }
 }
 // Function to delete a folder synchronously at a given path
 export async function deleteFolderSync(folderPath) {
   try {
     await fs.promises.rm(folderPath, { recursive: true, force: true });
-    console.log("Folder successfully deleted");
+    logger.info("Folder successfully deleted");
   } catch (error) {
-    console.error("Error deleting the folder:", error);
+    logger.error("Error deleting the folder:", error);
   }
 }
 export async function overwriteFolder(source: string, target: string) {
@@ -86,9 +92,9 @@ export async function overwriteFolder(source: string, target: string) {
     await fse.ensureDir(target);
     await fse.emptyDir(target);
     await copyDir(source, target);
-    console.log("Folder overwritten successfully");
+    logger.info("Folder overwritten successfully");
   } catch (error) {
-    console.error("Error overwriting the folder:", error);
+    logger.error("Error overwriting the folder:", error);
   }
 }
 
@@ -97,7 +103,7 @@ export async function readYamlFile(filePath: string) {
     const fileData = await fs_p.readFile(filePath, "utf8");
     return fileData;
   } catch (err) {
-    console.error("Error reading YAML file:", err);
+    logger.error("Error reading YAML file:", err);
     throw err; // Rethrow the error for caller to handle if needed
   }
 }
@@ -118,7 +124,7 @@ export async function copyDir(
   const files = await fs_p.readdir(src);
   for (const file of files) {
     if (ignoreFiles.includes(file)) {
-      console.log(`Ignoring file: ${file}`);
+      logger.info(`Ignoring file: ${file}`);
       continue;
     }
     const srcPath = path.join(src, file);
@@ -137,7 +143,7 @@ export async function ValidateJsonSchema(jsonSchema: Record<string, any>) {
     const schema = await JSON.parse(JSON.stringify(jsonSchema));
     return true;
   } catch (error) {
-    console.error("Error parsing schema:", error);
+    logger.error("Error parsing schema:", error);
     return false;
   }
 }
@@ -146,7 +152,7 @@ export async function ValidateJsonSchema(jsonSchema: Record<string, any>) {
 // const sourceFilePath = "../../ONDC-NTS-Specifications/api/cp0";
 // const destinationFilePath = "../history/copy";
 // copyDir(sourceFilePath, destinationFilePath);
-console.log(__dirname);
+// logger.info(__dirname);
 
 // Example usage:
 // const sourceFilePath = "../../ONDC-NTS-Specifications/api/cp0/index.yaml";
@@ -156,12 +162,12 @@ console.log(__dirname);
 // (async () => {
 //   const p = "../../../ONDC-NTS-Specifications/examples/on-demand/index.yaml";
 //   const data = await loadYamlWithRefs(path.resolve(__dirname, p));
-//   console.log(JSON.stringify(data, null, 2));
+//   logger.info(JSON.stringify(data, null, 2));
 //   // try {
 //   //   const relativeFolderPath = "../../ONDC-NTS-Specifications/api/cp0";
 //   //   const structure = await getFileStructureRelative(relativeFolderPath);
-//   //   console.log("File structure:", structure);
+//   //   logger.info("File structure:", structure);
 //   // } catch (err) {
-//   //   console.error("Error testing getFileStructureRelative:", err);
+//   //   logger.error("Error testing getFileStructureRelative:", err);
 //   // }
 // })();
